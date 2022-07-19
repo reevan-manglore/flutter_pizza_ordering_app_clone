@@ -1,19 +1,28 @@
-import 'package:flutter/cupertino.dart';
+import 'package:pizza_app/providers/toppings_provider.dart';
 
 import '../providers/pizza_item_provider.dart';
 
+import './topping_item.dart';
+
 class PizzaCartItem {
-  final String pizzaId;
+  final PizzaItemProvider pizza;
   final PizzaSizes selectedSize;
   int itemPrice = 0;
-  List<String>? extraToppings;
-  Map<String, String>? toppingToBeReplaced;
+  List<ToppingItem>? extraToppings;
+  Map<String, ToppingItem>? toppingReplacement;
+  /*
+    Here toppingReplacement map will contain data as follwing 
+    {
+      "toppingToBeReplaced":ToppingProvider,
+      "replacementTopping":ToppingProvider
+    }
+  */
 
   PizzaCartItem({
-    required this.pizzaId,
+    required this.pizza,
     required this.selectedSize,
-    this.extraToppings,
-    this.toppingToBeReplaced,
     required this.itemPrice,
+    this.extraToppings,
+    this.toppingReplacement,
   });
 }

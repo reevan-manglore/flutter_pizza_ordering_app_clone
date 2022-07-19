@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:pizza_app/models/topping_item.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/pizza_item_provider.dart';
 import '../../providers/menu_provider.dart';
 import '../../providers/toppings_provider.dart';
+import '../../providers/cart_provider.dart';
+
+import '../../models/pizza_cart_item.dart';
+import '../../models/topping_item.dart';
+
 import './replace_topping_card.dart';
 import '../../widgets/numberd_button.dart';
 import './toppings_card.dart';
@@ -148,6 +152,8 @@ class _CustomizationScreenState extends State<CustomizationScreen> {
       value: pizzaItemdata,
       builder: (context, _) {
         final data = Provider.of<PizzaItemProvider>(context);
+        final cartData = Provider.of<CartProvider>(context);
+
         return Scaffold(
           appBar: AppBar(
             title: Text("Veg Extreveganaza"),
@@ -263,13 +269,75 @@ class _CustomizationScreenState extends State<CustomizationScreen> {
               )
             ],
           ),
-          bottomNavigationBar: _buildBottomAppBar(context),
+          bottomNavigationBar: _buildBottomAppBar(
+            context,
+            itemCount: cartData.countOfPizzaItem(data),
+            whenIncrementPressed: () async {
+              List<ToppingItem>? addedToppings = [
+                ..._veganToppings
+                    .where((element) => element["didSelect"])
+                    .map((e) => e["toppingItem"] as ToppingItem)
+                    .toList(),
+                ..._nonVeganToppings
+                    .where((element) => element["didSelect"])
+                    .map((e) => e["toppingItem"] as ToppingItem)
+                    .toList(),
+              ];
+              addedToppings = addedToppings.isEmpty ? null : addedToppings;
+              if (_toppingToBeReplaced != null && _replacementTopping == null) {
+                await showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text("Choose Replacement Topping"),
+                    content: Text(
+                      "You choosed topping to be replaced but didnt replaced it with any of topping",
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text("Ok"),
+                      ),
+                    ],
+                  ),
+                );
+                return;
+              }
+              Map<String, ToppingItem>? toppingReplacement;
+
+              if (_toppingToBeReplaced != null) {
+                toppingReplacement = {
+                  "toppingToBeReplaced":
+                      Provider.of<ToppingsProvider>(context, listen: false)
+                          .findToppingById(_toppingToBeReplaced!),
+                  "replacementTopping":
+                      Provider.of<ToppingsProvider>(context, listen: false)
+                          .findToppingById(_replacementTopping!)
+                };
+              }
+
+              cartData.addPizza(
+                PizzaCartItem(
+                  pizza: data,
+                  selectedSize: _selectedSize,
+                  itemPrice: data.price[_selectedSize]!,
+                  extraToppings: addedToppings,
+                  toppingReplacement: toppingReplacement,
+                ),
+              );
+            },
+            whenDecrementPressed: () => cartData.reducePizzaFromCart(data),
+          ),
         );
       },
     );
   }
 
-  Widget _buildBottomAppBar(BuildContext context) {
+  Widget _buildBottomAppBar(
+    BuildContext context, {
+    required int itemCount,
+    required void Function() whenIncrementPressed,
+    required void Function() whenDecrementPressed,
+  }) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ClipRRect(
@@ -298,10 +366,10 @@ class _CustomizationScreenState extends State<CustomizationScreen> {
                     ),
                   ],
                 ),
-                NumberdButton(10000,
+                NumberdButton(itemCount,
                     label: "Add To Cart",
-                    onIncrementPressed: () {},
-                    onDecrementPressed: () {})
+                    onIncrementPressed: whenIncrementPressed,
+                    onDecrementPressed: whenDecrementPressed)
               ],
             ),
           ),

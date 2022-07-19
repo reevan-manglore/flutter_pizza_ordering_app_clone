@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:badges/badges.dart';
 
 import '../../providers/menu_provider.dart';
-
 import '../../providers/pizza_item_provider.dart';
 import '../../providers/sides_item_provider.dart';
+import "../../providers/cart_provider.dart";
 
 import '../../widgets/offers/hero_offer.dart';
 import '../../widgets/offers/sub_offers.dart';
@@ -31,6 +32,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final _pizzaProvider = Provider.of<MenuProvider>(context);
+    final _cartData = Provider.of<CartProvider>(context);
     List bestSellers = [];
     if (veganOnly) {
       bestSellers = [
@@ -54,9 +56,19 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             tooltip: "Your Cart",
             onPressed: () {},
-            icon: Icon(
-              Icons.shopping_cart,
-              size: 32,
+            icon: Badge(
+              badgeContent: Text(
+                "${_cartData.cartCount}",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
+              child: Icon(
+                Icons.shopping_cart,
+                size: 32,
+              ),
+              badgeColor: Theme.of(context).colorScheme.primary,
+              animationType: BadgeAnimationType.slide,
             ),
           ),
           IconButton(

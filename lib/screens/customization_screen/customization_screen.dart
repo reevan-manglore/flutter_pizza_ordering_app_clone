@@ -49,6 +49,30 @@ class _CustomizationScreenState extends State<CustomizationScreen> {
         _selectedSize =
             pizzaItemdata.price.keys.first; //if there is only one pizza size
       }
+
+      PizzaCartItem? lastAddedPizza =
+          Provider.of<CartProvider>(context, listen: false)
+              .getLastAddedPizzaById(id);
+      /*
+        if there exits last added pizza in cart with this id then
+        configure pizzaSize and toppings with previously added configuration
+       */
+      if (lastAddedPizza != null) {
+        _selectedSize = lastAddedPizza.selectedSize;
+        lastAddedPizza.extraToppings?.forEach((element) {
+          if (element.isVegan) {
+            _veganToppings.firstWhere(
+                (e) => e["toppingItem"] == element)["didSelect"] = true;
+          } else {
+            _nonVeganToppings.firstWhere(
+                (e) => e["toppingItem"] == element)["didSelect"] = true;
+          }
+        });
+        _toppingToBeReplaced =
+            lastAddedPizza.toppingReplacement?["toppingToBeReplaced"]?.id;
+        _replacementTopping =
+            lastAddedPizza.toppingReplacement?["replacementTopping"]?.id;
+      }
       didChangeDependencyRan = true;
     }
     super.didChangeDependencies();
@@ -325,7 +349,51 @@ class _CustomizationScreenState extends State<CustomizationScreen> {
                 ),
               );
             },
-            whenDecrementPressed: () => cartData.reducePizzaFromCart(data),
+            whenDecrementPressed: () {
+              cartData.reducePizzaFromCart(data);
+              PizzaCartItem? lastAddedPizza =
+                  Provider.of<CartProvider>(context, listen: false)
+                      .getLastAddedPizzaById(id);
+              /*
+        if there exits last added pizza in cart with this id then
+        configure pizzaSize and toppings with previously added configuration
+
+       */
+              if (lastAddedPizza == null) {
+                //if there dosent exist previously added items
+                _veganToppings
+                    .forEach((element) => element["didSelect"] = false);
+                _nonVeganToppings
+                    .forEach((element) => element["didSelect"] = false);
+                _toppingToBeReplaced = null;
+                _replacementTopping = null;
+                return;
+              }
+              _selectedSize = lastAddedPizza.selectedSize;
+              _veganToppings.forEach((element) {
+                if (lastAddedPizza.extraToppings != null &&
+                    lastAddedPizza.extraToppings!
+                        .contains(element["toppingItem"] as ToppingItem)) {
+                  element["didSelect"] = true;
+                } else {
+                  element["didSelect"] = false;
+                }
+              });
+              _nonVeganToppings.forEach((element) {
+                if (lastAddedPizza.extraToppings != null &&
+                    lastAddedPizza.extraToppings!
+                        .contains(element["toppingItem"] as ToppingItem)) {
+                  element["didSelect"] = true;
+                } else {
+                  element["didSelect"] = false;
+                }
+              });
+
+              _toppingToBeReplaced =
+                  lastAddedPizza.toppingReplacement?["toppingToBeReplaced"]?.id;
+              _replacementTopping =
+                  lastAddedPizza.toppingReplacement?["replacementTopping"]?.id;
+            },
           ),
         );
       },

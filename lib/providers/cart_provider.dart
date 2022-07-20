@@ -26,6 +26,15 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  //gets last added pizza to cart having (id) id
+  PizzaCartItem? getLastAddedPizzaById(String id) {
+    //if there doesnt exist pizza in cart with this id then return null
+    if (!_cartPizzaItems.any((element) => element.pizza.id == id)) {
+      return null;
+    }
+    return _cartPizzaItems.lastWhere((element) => element.pizza.id == id);
+  }
+
   int get cartCount {
     return _cartPizzaItems.length + _cartSidesItems.length;
   }

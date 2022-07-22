@@ -3,6 +3,7 @@ import '../../models/topping_item.dart';
 import '../../providers/toppings_provider.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class ReplaceToppingCard extends StatelessWidget {
   final List<ToppingItem> replaceableToppings;
   final String? toppingToBeReplaced;
@@ -56,7 +57,7 @@ class ReplaceToppingCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        margin: EdgeInsets.symmetric(
+        margin: const EdgeInsets.symmetric(
           horizontal: 10,
         ),
         child: Container(
@@ -156,7 +157,7 @@ class ReplaceToppingCard extends StatelessWidget {
       child: Container(
         width: double.infinity,
         color: Theme.of(context).colorScheme.surfaceVariant,
-        padding: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,7 +166,7 @@ class ReplaceToppingCard extends StatelessWidget {
               alignment: Alignment.topRight,
               child: TextButton(
                 onPressed: whenResetPressed,
-                child: Text("Reset these selections"),
+                child: const Text("Reset these selections"),
               ),
             ),
             _buildSideHeadding(context, "Replace Any One Of These"),
@@ -216,12 +217,12 @@ class ReplaceToppingCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Divider(height: 20, color: Colors.black, thickness: 10),
-                Text(
+                const Divider(height: 20, color: Colors.black, thickness: 10),
+                const Text(
                   "Replace  with one of these topings",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
                 ),
-                Divider(height: 20, color: Colors.black)
+                const Divider(height: 20, color: Colors.black)
               ],
             ),
             _buildSideHeadding(context, "Vegan Toppings"),

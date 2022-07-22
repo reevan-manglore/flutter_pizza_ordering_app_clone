@@ -100,8 +100,8 @@ class _CustomizationScreenState extends State<CustomizationScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
-            Icon(Icons.local_pizza),
-            SizedBox(
+            const Icon(Icons.local_pizza),
+            const SizedBox(
               width: 18,
             ),
             Text(size.getDisplayName),
@@ -180,7 +180,7 @@ class _CustomizationScreenState extends State<CustomizationScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            title: Text("Veg Extreveganaza"),
+            title: const Text("Veg Extreveganaza"),
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           ),
           body: CustomScrollView(
@@ -214,7 +214,7 @@ class _CustomizationScreenState extends State<CustomizationScreen> {
                 ),
               ),
               SliverPadding(
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   vertical: 15,
                   horizontal: 8,
                 ),
@@ -229,8 +229,8 @@ class _CustomizationScreenState extends State<CustomizationScreen> {
                       ),
                       _addSpacer(5),
                       Text(
-                        "  Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. ",
-                        style: TextStyle(
+                        data.description,
+                        style: const TextStyle(
                           fontSize: 20,
                         ),
                         textAlign: TextAlign.justify,
@@ -240,7 +240,7 @@ class _CustomizationScreenState extends State<CustomizationScreen> {
                               1 //if there is only one size of pizza
                           ? _buildSegmentedControl()
                           : Container(
-                              margin: EdgeInsets.symmetric(horizontal: 5),
+                              margin: const EdgeInsets.symmetric(horizontal: 5),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(3.0),
                                 color: Theme.of(context)
@@ -312,14 +312,14 @@ class _CustomizationScreenState extends State<CustomizationScreen> {
                 await showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: Text("Choose Replacement Topping"),
-                    content: Text(
+                    title: const Text("Choose Replacement Topping"),
+                    content: const Text(
                       "You choosed topping to be replaced but didnt replaced it with any of topping",
                     ),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        child: Text("Ok"),
+                        child: const Text("Ok"),
                       ),
                     ],
                   ),
@@ -343,7 +343,7 @@ class _CustomizationScreenState extends State<CustomizationScreen> {
                 PizzaCartItem(
                   pizza: data,
                   selectedSize: _selectedSize,
-                  itemPrice: data.price[_selectedSize]!,
+                  itemPrice: totalPrice,
                   extraToppings: addedToppings,
                   toppingReplacement: toppingReplacement,
                 ),
@@ -361,16 +361,18 @@ class _CustomizationScreenState extends State<CustomizationScreen> {
        */
               if (lastAddedPizza == null) {
                 //if there dosent exist previously added items
-                _veganToppings
-                    .forEach((element) => element["didSelect"] = false);
-                _nonVeganToppings
-                    .forEach((element) => element["didSelect"] = false);
+                for (var element in _veganToppings) {
+                  element["didSelect"] = false;
+                }
+                for (var element in _nonVeganToppings) {
+                  element["didSelect"] = false;
+                }
                 _toppingToBeReplaced = null;
                 _replacementTopping = null;
                 return;
               }
               _selectedSize = lastAddedPizza.selectedSize;
-              _veganToppings.forEach((element) {
+              for (var element in _veganToppings) {
                 if (lastAddedPizza.extraToppings != null &&
                     lastAddedPizza.extraToppings!
                         .contains(element["toppingItem"] as ToppingItem)) {
@@ -378,8 +380,8 @@ class _CustomizationScreenState extends State<CustomizationScreen> {
                 } else {
                   element["didSelect"] = false;
                 }
-              });
-              _nonVeganToppings.forEach((element) {
+              }
+              for (var element in _nonVeganToppings) {
                 if (lastAddedPizza.extraToppings != null &&
                     lastAddedPizza.extraToppings!
                         .contains(element["toppingItem"] as ToppingItem)) {
@@ -387,7 +389,7 @@ class _CustomizationScreenState extends State<CustomizationScreen> {
                 } else {
                   element["didSelect"] = false;
                 }
-              });
+              }
 
               _toppingToBeReplaced =
                   lastAddedPizza.toppingReplacement?["toppingToBeReplaced"]?.id;
@@ -414,21 +416,22 @@ class _CustomizationScreenState extends State<CustomizationScreen> {
           elevation: 2,
           color: Theme.of(context).colorScheme.primaryContainer,
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             height: 70,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
                   children: [
-                    Text("Cost Of This Pizza:", style: TextStyle(fontSize: 18)),
+                    const Text("Cost Of This Pizza:",
+                        style: TextStyle(fontSize: 18)),
                     Row(
                       children: [
-                        Icon(Icons.currency_rupee),
+                        const Icon(Icons.currency_rupee),
                         Text(
                           totalPrice.toString()..padRight(3),
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 24),
+                          style: const TextStyle(fontSize: 24),
                         ),
                       ],
                     ),

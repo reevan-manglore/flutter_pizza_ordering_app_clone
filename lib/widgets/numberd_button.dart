@@ -19,7 +19,7 @@ class NumberdButton extends StatelessWidget {
       return ElevatedButton.icon(
         onPressed: onIncrementPressed,
         label: Text(label),
-        icon: Icon(Icons.add),
+        icon: const Icon(Icons.add),
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
@@ -42,7 +42,7 @@ class NumberdButton extends StatelessWidget {
                 color: Theme.of(context).primaryColor,
               ),
             ),
-            SizedBox(width: 6),
+            const SizedBox(width: 6),
             Text(
               "$value",
               style: TextStyle(
@@ -51,7 +51,7 @@ class NumberdButton extends StatelessWidget {
                 color: Theme.of(context).colorScheme.secondary,
               ),
             ),
-            SizedBox(width: 6),
+            const SizedBox(width: 6),
             IconButton(
               onPressed: onIncrementPressed,
               icon: Icon(

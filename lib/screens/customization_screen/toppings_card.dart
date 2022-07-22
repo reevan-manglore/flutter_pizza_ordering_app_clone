@@ -24,7 +24,7 @@ class ToppingsCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        margin: EdgeInsets.symmetric(
+        margin: const EdgeInsets.symmetric(
           horizontal: 10,
         ),
         child: Container(
@@ -45,7 +45,7 @@ class ToppingsCard extends StatelessWidget {
                         image: DecorationImage(
                           image: NetworkImage(toppingImageUrl),
                           fit: BoxFit.cover,
-                          colorFilter: ColorFilter.mode(
+                          colorFilter: const ColorFilter.mode(
                             Colors.black26,
                             BlendMode.darken,
                           ),
@@ -66,23 +66,23 @@ class ToppingsCard extends StatelessWidget {
                       bottom: 2,
                       left: 2,
                       child: Chip(
-                        labelPadding: EdgeInsets.all(0),
+                        labelPadding: const EdgeInsets.all(0),
                         backgroundColor:
                             Theme.of(context).colorScheme.secondaryContainer,
                         label: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.add,
                               size: 24,
                             ),
-                            Icon(
+                            const Icon(
                               Icons.currency_rupee,
                               size: 24,
                             ),
                             Text(
                               toppingPrice.toString(),
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 20,
                               ),
                               textAlign: TextAlign.center,

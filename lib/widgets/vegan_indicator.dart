@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class VeganIndicator extends StatelessWidget {
-  bool isVegan;
-  VeganIndicator({required this.isVegan});
+  final bool isVegan;
+  const VeganIndicator({required this.isVegan});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(3),
-      padding: EdgeInsets.all(4),
+      margin: const EdgeInsets.all(3),
+      padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(

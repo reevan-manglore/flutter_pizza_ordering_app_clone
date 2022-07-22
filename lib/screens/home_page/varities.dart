@@ -20,7 +20,7 @@ class Varites extends StatelessWidget {
               backgroundImage: AssetImage(imageLocation),
               radius: 45,
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Text(
@@ -36,12 +36,12 @@ class Varites extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView(
-      physics: BouncingScrollPhysics(),
-      padding: EdgeInsets.symmetric(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(
         vertical: 10,
         horizontal: 5,
       ),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         childAspectRatio: 2 / 2.5,
         crossAxisSpacing: 8,

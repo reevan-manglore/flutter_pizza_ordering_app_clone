@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:pizza_app/providers/cart_provider.dart';
 import 'package:pizza_app/screens/customization_screen/customization_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/pizza_item_provider.dart';
+import '../../providers/cart_provider.dart';
+
+import '../../models/pizza_cart_item.dart';
 
 import '../../widgets/numberd_button.dart';
 import '../../widgets/vegan_indicator.dart';
@@ -44,9 +48,9 @@ class _PizzaItemDisplayCardState extends State<PizzaItemDisplayCard> {
           : null,
       child: Card(
         elevation: 3,
-        margin: EdgeInsets.symmetric(horizontal: 2.0, vertical: 10.0),
+        margin: const EdgeInsets.symmetric(horizontal: 2.0, vertical: 10.0),
         child: ClipRRect(
-          borderRadius: BorderRadius.all(
+          borderRadius: const BorderRadius.all(
             Radius.circular(5),
           ),
           child: Container(
@@ -82,7 +86,7 @@ class _PizzaItemDisplayCardState extends State<PizzaItemDisplayCard> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           backgroundColor: Colors.black26,
-                          label: Text("BestSeller"),
+                          label: const Text("BestSeller"),
                         ),
                       ),
                     Positioned(
@@ -109,7 +113,7 @@ class _PizzaItemDisplayCardState extends State<PizzaItemDisplayCard> {
                         backgroundColor: Colors.black26,
                         label: Row(
                           children: [
-                            Icon(Icons.currency_rupee),
+                            const Icon(Icons.currency_rupee),
                             Text("${data.price[_choosenSize]}"),
                           ],
                         ),
@@ -122,10 +126,10 @@ class _PizzaItemDisplayCardState extends State<PizzaItemDisplayCard> {
                         child: Chip(
                           label: Row(
                             children: [
-                              Text(
+                              const Text(
                                 "Customize",
                               ),
-                              Icon(Icons.arrow_forward)
+                              const Icon(Icons.arrow_forward)
                             ],
                           ),
                           backgroundColor: Colors.black26,
@@ -134,8 +138,8 @@ class _PizzaItemDisplayCardState extends State<PizzaItemDisplayCard> {
                   ],
                 ),
                 Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0, vertical: 8.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -146,19 +150,19 @@ class _PizzaItemDisplayCardState extends State<PizzaItemDisplayCard> {
                         textAlign: TextAlign.left,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 3,
                       ),
                       Text(
                         data.description,
                         maxLines: 5,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 15,
                         ),
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.justify,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 8,
                       ),
                       Row(
@@ -166,7 +170,7 @@ class _PizzaItemDisplayCardState extends State<PizzaItemDisplayCard> {
                           data.price.keys.length == 1
                               ? Text(
                                   data.price.keys.first.getDisplayName,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 16,
                                   ),
@@ -184,11 +188,56 @@ class _PizzaItemDisplayCardState extends State<PizzaItemDisplayCard> {
                                         value ?? PizzaSizes.medium);
                                   },
                                 ),
-                          Spacer(),
-                          NumberdButton(10,
+                          const Spacer(),
+                          Consumer<CartProvider>(
+                            builder: (context, cartData, _) => NumberdButton(
+                              cartData.countOfPizzaItem(data),
                               label: "Add To Cart",
-                              onIncrementPressed: () {},
-                              onDecrementPressed: () {}),
+                              onIncrementPressed: () async {
+                                final previouslyAddedItem =
+                                    cartData.getLastAddedPizzaById(data.id);
+                                //by defualt add current selected pizza
+                                int? option = 2;
+                                if (previouslyAddedItem != null &&
+                                    (previouslyAddedItem.selectedSize !=
+                                            _choosenSize ||
+                                        previouslyAddedItem.extraToppings !=
+                                            null ||
+                                        previouslyAddedItem
+                                                .toppingReplacement !=
+                                            null)) {
+                                  option = await showModalBottomSheet<int>(
+                                    context: context,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    builder: (context) => BottomSheetStructure(
+                                      previouslySelectedItem:
+                                          previouslyAddedItem,
+                                      currentlySelectedPizzaSize: _choosenSize,
+                                    ),
+                                  );
+                                }
+                                switch (option) {
+                                  case 1:
+                                    cartData.addPizza(previouslyAddedItem!);
+                                    break;
+                                  case 2:
+                                    cartData.addPizza(
+                                      PizzaCartItem(
+                                          pizza: data,
+                                          selectedSize: _choosenSize,
+                                          itemPrice: data.price[_choosenSize]!),
+                                    );
+                                    break;
+                                  default:
+                                }
+                              },
+                              onDecrementPressed: () {
+                                cartData.reducePizzaFromCart(data);
+                              },
+                            ),
+                          ),
                         ],
                       )
                     ],
@@ -196,6 +245,211 @@ class _PizzaItemDisplayCardState extends State<PizzaItemDisplayCard> {
                 )
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BottomSheetStructure extends StatelessWidget {
+  final PizzaCartItem previouslySelectedItem;
+  final PizzaSizes currentlySelectedPizzaSize;
+
+  const BottomSheetStructure({
+    required this.previouslySelectedItem,
+    required this.currentlySelectedPizzaSize,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(9.0),
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+        color: Colors.white,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Transform.translate(
+            offset: Offset(MediaQuery.of(context).size.width / 2 - 30, -70),
+            child: const CircleAvatar(
+              backgroundColor: Colors.grey,
+              child: Icon(
+                Icons.close,
+              ),
+            ),
+          ),
+          const Center(
+            child: Text(
+              "Choose Your Customization",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const Text(
+            "Repeat Previous Customization",
+            textAlign: TextAlign.left,
+          ),
+          _customSelectionTile(context),
+          const SizedBox(
+            height: 10.0,
+          ),
+          const Text(
+            "Or Continue With",
+            textAlign: TextAlign.left,
+          ),
+          Card(
+            child: ListTile(
+              onTap: () {
+                Navigator.of(context).pop<int>(2);
+              },
+              title: Text(
+                previouslySelectedItem.pizza.pizzaName,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+              subtitle: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Size: ",
+                    style: Theme.of(context).textTheme.subtitle2,
+                  ),
+                  Text(currentlySelectedPizzaSize.getDisplayName)
+                ],
+              ),
+              trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                const Icon(Icons.currency_rupee),
+                const SizedBox(
+                  width: 4.0,
+                ),
+                Text(
+                  "${previouslySelectedItem.pizza.price[currentlySelectedPizzaSize]}",
+                )
+              ]),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _customSelectionTile(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).pop<int>(1);
+      },
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 13.0,
+            vertical: 10.0,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      previouslySelectedItem.pizza.pizzaName,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.left,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Size:",
+                          style: Theme.of(context).textTheme.subtitle2,
+                        ),
+                        Text(
+                          previouslySelectedItem.selectedSize.getDisplayName,
+                          style: Theme.of(context).textTheme.caption,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10.0,
+                    ),
+                    if (previouslySelectedItem.extraToppings != null)
+                      Row(
+                        children: [
+                          Text(
+                            "Extra Toppings: ",
+                            style: Theme.of(context).textTheme.subtitle2,
+                          ),
+                          Expanded(
+                            child: Text(
+                              previouslySelectedItem.extraToppings!.fold(
+                                "",
+                                (previousValue, element) =>
+                                    previousValue + " ${element.toppingName},",
+                              ),
+                              style: Theme.of(context).textTheme.caption,
+                            ),
+                          )
+                        ],
+                      ),
+                    if (previouslySelectedItem.toppingReplacement != null)
+                      Column(
+                        children: [
+                          const Divider(
+                            height: 8.0,
+                          ),
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  previouslySelectedItem
+                                      .toppingReplacement![
+                                          "toppingToBeReplaced"]!
+                                      .toppingName,
+                                  style: Theme.of(context).textTheme.caption,
+                                ),
+                              ),
+                              Text(
+                                " Replaced With ",
+                                style: Theme.of(context).textTheme.subtitle2,
+                              ),
+                              Flexible(
+                                child: Text(
+                                  previouslySelectedItem
+                                      .toppingReplacement![
+                                          "replacementTopping"]!
+                                      .toppingName,
+                                  style: Theme.of(context).textTheme.caption,
+                                  softWrap: true,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.currency_rupee),
+              const SizedBox(
+                width: 5.0,
+              ),
+              Text("${previouslySelectedItem.itemPrice}")
+            ],
           ),
         ),
       ),

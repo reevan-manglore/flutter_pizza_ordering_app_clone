@@ -9,18 +9,15 @@ import '../../widgets/vegan_indicator.dart';
 class SidesItemDisplayCard extends StatelessWidget {
   const SidesItemDisplayCard({Key? key}) : super(key: key);
 
-  static const _imageUrl =
-      "https://media.istockphoto.com/photos/cheesy-pepperoni-pizza-picture-id938742222?b=1&k=20&m=938742222&s=170667a&w=0&h=HyfY78AeiQM8vZbIea-iiGmNxHHuHD-PVVuHRvrCIj4=";
-
   final tempTitle = "An choco chip cokkies filled with goeey caramel";
   @override
   Widget build(BuildContext context) {
     final data = Provider.of<SidesItemProvider>(context);
     return Card(
       elevation: 3,
-      margin: EdgeInsets.symmetric(horizontal: 2.0, vertical: 10.0),
+      margin: const EdgeInsets.symmetric(horizontal: 2.0, vertical: 10.0),
       child: ClipRRect(
-        borderRadius: BorderRadius.all(
+        borderRadius: const BorderRadius.all(
           Radius.circular(5),
         ),
         child: Container(
@@ -56,7 +53,7 @@ class SidesItemDisplayCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         backgroundColor: Colors.black26,
-                        label: Text("BestSeller"),
+                        label: const Text("BestSeller"),
                       ),
                     ),
                   Positioned(
@@ -85,7 +82,7 @@ class SidesItemDisplayCard extends StatelessWidget {
                       backgroundColor: Colors.black26,
                       label: Row(
                         children: [
-                          Icon(Icons.currency_rupee),
+                          const Icon(Icons.currency_rupee),
                           Text(data.price.toString()),
                         ],
                       ),
@@ -94,7 +91,8 @@ class SidesItemDisplayCard extends StatelessWidget {
                 ],
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -105,19 +103,19 @@ class SidesItemDisplayCard extends StatelessWidget {
                       textAlign: TextAlign.left,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 3,
                     ),
                     Text(
                       "  ${data.sidesDescription}",
                       maxLines: 5,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 15,
                       ),
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.justify,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 8,
                     ),
                     Align(

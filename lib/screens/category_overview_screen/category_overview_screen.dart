@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:badges/badges.dart';
 
 import './sides_item_display_card.dart';
-import 'pizza_item_display_card.dart';
+import './pizza_item_display_card.dart';
+
 import '../../providers/pizza_item_provider.dart';
 import '../../providers/sides_item_provider.dart';
 import '../../providers/menu_provider.dart';
+import '../../providers/cart_provider.dart';
 
 class CategoryOverviewScreen extends StatefulWidget {
   static const String routeName = "/category-screen";
@@ -68,6 +71,30 @@ class _CategoryOverviewScreenState extends State<CategoryOverviewScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(argument),
+        actions: [
+          IconButton(
+            tooltip: "Your Cart",
+            onPressed: () {},
+            icon: Consumer<CartProvider>(
+              builder: (context, cartData, _) => Badge(
+                alignment: Alignment.topLeft,
+                position: BadgePosition.topEnd(top: -13, end: 2),
+                badgeContent: Text(
+                  "${cartData.cartCount}",
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                ),
+                child: const Icon(
+                  Icons.shopping_cart,
+                  size: 32,
+                ),
+                badgeColor: Theme.of(context).colorScheme.primary,
+                animationType: BadgeAnimationType.slide,
+              ),
+            ),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -131,7 +158,7 @@ class _CategoryOverviewScreenState extends State<CategoryOverviewScreen> {
       itemBuilder: (context, idx) {
         return ChangeNotifierProvider.value(
           value: _sides[idx],
-          builder: (context, _) => SidesItemDisplayCard(),
+          builder: (context, _) => const SidesItemDisplayCard(),
         );
       },
       itemCount: _sides.length,

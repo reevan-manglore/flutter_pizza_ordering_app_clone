@@ -34,14 +34,15 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
-          colorSchemeSeed: Color(0xFF006491),
+          colorSchemeSeed: const Color(0xFF006491),
           useMaterial3: true,
         ),
         routes: {
           '/': (context) => HomePage(),
-          CustomizationScreen.routeName: (context) => CustomizationScreen(),
+          CustomizationScreen.routeName: (context) =>
+              const CustomizationScreen(),
           CategoryOverviewScreen.routeName: (context) =>
-              CategoryOverviewScreen(),
+              const CategoryOverviewScreen(),
         },
         initialRoute: '/',
       ),

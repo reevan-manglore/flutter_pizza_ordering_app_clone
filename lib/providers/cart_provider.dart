@@ -4,8 +4,8 @@ import '../models/pizza_cart_item.dart';
 import '../providers/pizza_item_provider.dart';
 
 class CartProvider extends ChangeNotifier {
-  List<PizzaCartItem> _cartPizzaItems = [];
-  List _cartSidesItems = [];
+  final List<PizzaCartItem> _cartPizzaItems = [];
+  final List _cartSidesItems = [];
 
   void addPizza(PizzaCartItem pizza) {
     _cartPizzaItems.add(pizza);

@@ -98,7 +98,7 @@ class _BestSellerPizzaCardState extends State<BestSellerPizzaCard> {
                       backgroundColor: Colors.black26,
                       label: Row(
                         children: [
-                          Icon(Icons.currency_rupee),
+                          const Icon(Icons.currency_rupee),
                           Text("${data.price[_choosenSize]}"),
                         ],
                       ),
@@ -111,10 +111,10 @@ class _BestSellerPizzaCardState extends State<BestSellerPizzaCard> {
                       child: Chip(
                         label: Row(
                           children: [
-                            Text(
+                            const Text(
                               "Customize",
                             ),
-                            Icon(Icons.arrow_forward)
+                            const Icon(Icons.arrow_forward)
                           ],
                         ),
                         backgroundColor: Colors.black26,
@@ -124,7 +124,8 @@ class _BestSellerPizzaCardState extends State<BestSellerPizzaCard> {
               ),
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -133,14 +134,14 @@ class _BestSellerPizzaCardState extends State<BestSellerPizzaCard> {
                         textAlign: TextAlign.start,
                         style: Theme.of(context).textTheme.headline5,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 8,
                       ),
                       Expanded(
                         child: Text(
                           data.description,
                           maxLines: 5,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 15,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -166,7 +167,7 @@ class _BestSellerPizzaCardState extends State<BestSellerPizzaCard> {
                                 )
                               : Text(
                                   data.price.keys.first.getDisplayName,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                   ),

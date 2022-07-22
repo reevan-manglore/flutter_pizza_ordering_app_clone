@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class HeroOffer extends StatelessWidget {
   String title;
   String? description;
@@ -23,8 +24,8 @@ class HeroOffer extends StatelessWidget {
         child: Container(
           width: double.infinity,
           clipBehavior: Clip.hardEdge,
-          padding: EdgeInsets.all(15.0),
-          constraints: BoxConstraints(maxHeight: double.infinity),
+          padding: const EdgeInsets.all(15.0),
+          constraints: const BoxConstraints(maxHeight: double.infinity),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
@@ -47,21 +48,21 @@ class HeroOffer extends StatelessWidget {
                             fontWeight: FontWeight.w500,
                           ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10.0,
                     ),
-                    Text(
+                    const Text(
                       "On any pizza's on first and second order and only for conumer who are staying long for more than 3monts and are only using hdfc bank credit card ",
                       overflow: TextOverflow.ellipsis,
                       softWrap: true,
                       maxLines: 9,
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Align(
                       alignment: image == null
                           ? Alignment.center
                           : Alignment.bottomLeft,
-                      child: Icon(
+                      child: const Icon(
                         Icons.arrow_forward,
                         size: 32,
                       ),
@@ -69,7 +70,7 @@ class HeroOffer extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 10,
               ),
               Image.asset(

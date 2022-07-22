@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_const
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:badges/badges.dart';
@@ -63,7 +65,7 @@ class _HomePageState extends State<HomePage> {
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.shopping_cart,
                 size: 32,
               ),
@@ -74,7 +76,7 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             tooltip: "Manage Your Account",
             onPressed: () {},
-            icon: Icon(
+            icon: const Icon(
               Icons.account_circle,
               size: 32,
             ),
@@ -84,7 +86,7 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
         child: Container(
           width: double.infinity,
-          margin: EdgeInsets.all(8),
+          margin: const EdgeInsets.all(8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -98,10 +100,10 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: _buildHeader("More Offers"),
               ),
-              SizedBox(
+              const SizedBox(
                 width: double.infinity,
                 height: 150,
-                child: SubOffers(),
+                child: const SubOffers(),
               ),
               Padding(
                 padding: const EdgeInsets.only(
@@ -119,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 width: double.infinity,
                 height: 330,
-                child: Varites(),
+                child: const Varites(),
               ),
               Padding(
                 padding: const EdgeInsets.only(
@@ -170,7 +172,7 @@ class _HomePageState extends State<HomePage> {
               ),
               Container(
                 width: double.infinity,
-                constraints: BoxConstraints(
+                constraints: const BoxConstraints(
                   minHeight: 200,
                   maxHeight: 400,
                 ),
@@ -212,24 +214,24 @@ class _LocationPickerButton extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.delivery_dining,
                   size: 28,
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
-                Text("Take Away From"),
-                SizedBox(
+                const Text("Take Away From"),
+                const SizedBox(
                   width: 5,
                 ),
-                Icon(Icons.expand_more),
+                const Icon(Icons.expand_more),
               ],
             ),
             Container(
               width: 250,
               alignment: Alignment.center,
-              child: Text(
+              child: const Text(
                 "Santosh Nagar munnur post near anganwadi kendra manglore pandithouse",
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.start,

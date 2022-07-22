@@ -1,5 +1,3 @@
-import 'package:pizza_app/providers/toppings_provider.dart';
-
 import '../providers/pizza_item_provider.dart';
 
 import './topping_item.dart';

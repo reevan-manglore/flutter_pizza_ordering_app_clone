@@ -64,7 +64,7 @@ class BestSellerSidesCard extends StatelessWidget {
                     backgroundColor: Colors.black26,
                     label: Row(
                       children: [
-                        Icon(Icons.currency_rupee),
+                        const Icon(Icons.currency_rupee),
                         Text("${data.price}"),
                       ],
                     ),
@@ -74,7 +74,8 @@ class BestSellerSidesCard extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -83,20 +84,20 @@ class BestSellerSidesCard extends StatelessWidget {
                       textAlign: TextAlign.start,
                       style: Theme.of(context).textTheme.headline5,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 8,
                     ),
                     Expanded(
                       child: Text(
                         data.sidesDescription,
                         maxLines: 5,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 15,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 8,
                     ),
                     Align(

@@ -1,11 +1,13 @@
 import 'package:flutter/widgets.dart';
 
 import '../models/pizza_cart_item.dart';
+import '../models/sides_cart_item.dart';
 import '../providers/pizza_item_provider.dart';
+import '../providers/sides_item_provider.dart';
 
 class CartProvider extends ChangeNotifier {
   final List<PizzaCartItem> _cartPizzaItems = [];
-  final List _cartSidesItems = [];
+  final List<SidesCartItem> _cartSidesItems = [];
 
   void addPizza(PizzaCartItem pizza) {
     _cartPizzaItems.add(pizza);
@@ -33,6 +35,25 @@ class CartProvider extends ChangeNotifier {
       return null;
     }
     return _cartPizzaItems.lastWhere((element) => element.pizza.id == id);
+  }
+
+  void addSide(SidesCartItem side) {
+    _cartSidesItems.add(side);
+    notifyListeners();
+  }
+
+  void reduceSideFromCart(SidesItemProvider side) {
+    int index =
+        _cartSidesItems.lastIndexWhere((element) => element.side == side);
+    if (index < 0) {
+      return;
+    }
+    _cartSidesItems.removeAt(index);
+    notifyListeners();
+  }
+
+  int countOfSideItem(SidesItemProvider side) {
+    return _cartSidesItems.where((element) => element.side == side).length;
   }
 
   int get cartCount {

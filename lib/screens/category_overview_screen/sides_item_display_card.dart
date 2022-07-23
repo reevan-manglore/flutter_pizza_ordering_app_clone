@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/sides_item_provider.dart';
+import '../../providers/cart_provider.dart';
+
+import '../../models/sides_cart_item.dart';
 
 import '../../widgets/numberd_button.dart';
 import '../../widgets/vegan_indicator.dart';
@@ -120,11 +123,19 @@ class SidesItemDisplayCard extends StatelessWidget {
                     ),
                     Align(
                       alignment: Alignment.centerRight,
-                      child: NumberdButton(
-                        10,
-                        label: "Add To Cart",
-                        onIncrementPressed: () {},
-                        onDecrementPressed: () {},
+                      child: Consumer<CartProvider>(
+                        builder: (context, cartData, _) => NumberdButton(
+                          cartData.countOfSideItem(data),
+                          label: "Add To Cart",
+                          onIncrementPressed: () {
+                            cartData.addSide(
+                              SidesCartItem(data, data.price),
+                            );
+                          },
+                          onDecrementPressed: () {
+                            cartData.reduceSideFromCart(data);
+                          },
+                        ),
                       ),
                     ),
                   ],

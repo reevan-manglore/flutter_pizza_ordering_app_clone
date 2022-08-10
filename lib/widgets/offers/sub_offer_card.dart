@@ -1,25 +1,6 @@
 import 'package:flutter/material.dart';
 
-class SubOffers extends StatelessWidget {
-  const SubOffers({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      scrollDirection: Axis.horizontal,
-      physics: const BouncingScrollPhysics(),
-      children: [
-        _SubOfferItem(),
-        _SubOfferItem(),
-        _SubOfferItem(),
-        _SubOfferItem(),
-        _SubOfferItem(),
-      ],
-    );
-  }
-}
-
-class _SubOfferItem extends StatelessWidget {
+class SubOfferCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -31,8 +12,8 @@ class _SubOfferItem extends StatelessWidget {
         horizontal: 10,
       ),
       child: Container(
-        width: 200,
-        height: 150,
+        width: 300,
+        height: 100,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           gradient: LinearGradient(

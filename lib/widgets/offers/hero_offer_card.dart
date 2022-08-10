@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:pizza_app/models/offer_cupon.dart';
 
-// ignore: must_be_immutable
-class HeroOffer extends StatelessWidget {
-  String title;
-  String? description;
-  String? subdescription;
-  String? image;
-  HeroOffer({
+class HeroOfferCard extends StatelessWidget {
+  final String title;
+  final String? description;
+  final String? image;
+  final String offerCode;
+  final OfferType type;
+  const HeroOfferCard({
     required this.title,
     this.description,
+    required this.offerCode,
     this.image,
+    required this.type,
   });
   @override
   Widget build(BuildContext context) {
-    image = "shit";
     return Card(
       elevation: 2.0,
       shape: RoundedRectangleBorder(
@@ -41,31 +43,47 @@ class HeroOffer extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title,
-                      style: Theme.of(context).textTheme.headline6!.copyWith(
-                            fontWeight: FontWeight.w500,
-                          ),
+                      title, //max charcaters that can be fitted is 36
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: false,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     const SizedBox(
                       height: 10.0,
                     ),
-                    const Text(
-                      "On any pizza's on first and second order and only for conumer who are staying long for more than 3monts and are only using hdfc bank credit card ",
+                    Text(
+                      //max cahracters that can be fitted is 144 chracters
+                      description ??
+                          "On any pizza's on first and second order and only for conumer who are staying long for more than 3monts and are only using hdfc bank credit card ",
                       overflow: TextOverflow.ellipsis,
-                      softWrap: true,
-                      maxLines: 9,
+                      maxLines: 8,
                     ),
                     const SizedBox(height: 10),
                     Align(
                       alignment: image == null
                           ? Alignment.center
                           : Alignment.bottomLeft,
-                      child: const Icon(
-                        Icons.arrow_forward,
-                        size: 32,
-                      ),
+                      child: type == OfferType.offerOnItem
+                          ? const Icon(
+                              Icons.arrow_forward,
+                              size: 32,
+                            )
+                          : Text(
+                              "Copy Code \"$offerCode\"",
+                              maxLines: 1,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue.shade700,
+                              ),
+                            ) //max length of offer code accepted  is 6
+                      ,
                     ),
                   ],
                 ),

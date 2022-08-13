@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../category_overview_screen/category_overview_screen.dart';
+import '../item_display_screen/items_by_category_display_screen.dart';
 
 class Varites extends StatelessWidget {
   const Varites({Key? key}) : super(key: key);
@@ -9,7 +9,7 @@ class Varites extends StatelessWidget {
     return InkWell(
       onTap: () {
         Navigator.of(context)
-            .pushNamed(CategoryOverviewScreen.routeName, arguments: name);
+            .pushNamed(ItemsByCategoryDisplayScreen.routeName, arguments: name);
       },
       child: SizedBox(
         child: Column(
@@ -51,7 +51,7 @@ class Varites extends StatelessWidget {
         buildAvatar(
           context,
           "Veg Pizza",
-          "lib/assets/images/veg-pizza-avatar.jpg",
+          "lib/assets/images/veg-pizza-avatar.png",
         ),
         buildAvatar(
           context,

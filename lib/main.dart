@@ -5,10 +5,12 @@ import 'package:provider/provider.dart';
 import './providers/menu_provider.dart';
 import 'providers/toppings_provider.dart';
 import './providers/cart_provider.dart';
+import './providers/offer_provider.dart';
 
 import 'screens/home_page/home_page.dart';
 import 'screens/customization_screen/customization_screen.dart';
-import 'screens/category_overview_screen/category_overview_screen.dart';
+import 'screens/item_display_screen/items_by_category_display_screen.dart';
+import 'screens/cart_screen/cart_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,6 +32,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => CartProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => OfferProvider(),
+        ),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -41,8 +46,9 @@ class MyApp extends StatelessWidget {
           '/': (context) => HomePage(),
           CustomizationScreen.routeName: (context) =>
               const CustomizationScreen(),
-          CategoryOverviewScreen.routeName: (context) =>
-              const CategoryOverviewScreen(),
+          ItemsByCategoryDisplayScreen.routeName: (context) =>
+              const ItemsByCategoryDisplayScreen(),
+          CartScreen.routeName: (context) => const CartScreen(),
         },
         initialRoute: '/',
       ),

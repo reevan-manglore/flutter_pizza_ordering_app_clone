@@ -35,9 +35,8 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   provider: ^6.0.2
-  dropdown_button2: ^1.5.2
   badges: ^2.0.3
-
+  fluttertoast: ^8.0.9
 
 dev_dependencies:
   flutter_test:
@@ -68,7 +67,7 @@ flutter:
 
   assets:
     - lib/assets/images/pizza-offer-avatar.png
-    - lib/assets/images/veg-pizza-avatar.jpg
+    - lib/assets/images/veg-pizza-avatar.png
     - lib/assets/images/non_veg-pizza-avatar.jpg
     - lib/assets/images/sides-avatar.jpg
     - lib/assets/images/dessert-avatar.jpg

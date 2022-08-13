@@ -10,16 +10,18 @@ import '../../providers/sides_item_provider.dart';
 import '../../providers/menu_provider.dart';
 import '../../providers/cart_provider.dart';
 
-class CategoryOverviewScreen extends StatefulWidget {
+class ItemsByCategoryDisplayScreen extends StatefulWidget {
   static const String routeName = "/category-screen";
 
-  const CategoryOverviewScreen({Key? key}) : super(key: key);
+  const ItemsByCategoryDisplayScreen({Key? key}) : super(key: key);
 
   @override
-  State<CategoryOverviewScreen> createState() => _CategoryOverviewScreenState();
+  State<ItemsByCategoryDisplayScreen> createState() =>
+      _ItemsByCategoryDisplayScreenState();
 }
 
-class _CategoryOverviewScreenState extends State<CategoryOverviewScreen> {
+class _ItemsByCategoryDisplayScreenState
+    extends State<ItemsByCategoryDisplayScreen> {
   bool veganOnly = false;
   bool isPizzaCategory = false;
   String argument = "";

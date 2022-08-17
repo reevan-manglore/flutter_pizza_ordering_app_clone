@@ -16,6 +16,10 @@ class NumberdButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (value < 1) {
+      ElevatedButton(
+        onPressed: () {},
+        child: Container(),
+      );
       return ElevatedButton.icon(
         onPressed: onIncrementPressed,
         label: Text(label),

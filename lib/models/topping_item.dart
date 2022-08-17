@@ -12,4 +12,18 @@ class ToppingItem {
     required this.toppingPrice,
     required this.isVegan,
   });
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! ToppingItem) {
+      return false;
+    }
+    if (other.id != id) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 }

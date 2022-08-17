@@ -11,6 +11,7 @@ import 'screens/home_page/home_page.dart';
 import 'screens/customization_screen/customization_screen.dart';
 import 'screens/item_display_screen/items_by_category_display_screen.dart';
 import 'screens/cart_screen/cart_screen.dart';
+import 'screens/item_display_screen/items_by_offer_display_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -49,6 +50,8 @@ class MyApp extends StatelessWidget {
           ItemsByCategoryDisplayScreen.routeName: (context) =>
               const ItemsByCategoryDisplayScreen(),
           CartScreen.routeName: (context) => const CartScreen(),
+          ItemsByOfferDisplayScreen.routeName: (context) =>
+              const ItemsByOfferDisplayScreen()
         },
         initialRoute: '/',
       ),

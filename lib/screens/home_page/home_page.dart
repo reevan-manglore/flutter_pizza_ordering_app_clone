@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_const
 
 import 'package:flutter/material.dart';
+import 'package:pizza_app/models/offer_cupon.dart';
 import 'package:provider/provider.dart';
 import 'package:badges/badges.dart';
 
@@ -8,12 +9,17 @@ import '../../providers/menu_provider.dart';
 import '../../providers/pizza_item_provider.dart';
 import '../../providers/sides_item_provider.dart';
 import "../../providers/cart_provider.dart";
+import '../../providers/offer_provider.dart';
+import '../../widgets/custom_toast.dart';
 
-import '../../widgets/offers/hero_offer.dart';
-import '../../widgets/offers/sub_offers.dart';
+import 'hero_offer_card.dart';
+import 'sub_offer_card.dart';
 import './varities.dart';
 import './bestseller_pizza_card.dart';
 import './bestseller_sides_card.dart';
+
+import '../cart_screen/cart_screen.dart';
+import '../item_display_screen/items_by_offer_display_screen.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -35,6 +41,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final _pizzaProvider = Provider.of<MenuProvider>(context);
     final _cartData = Provider.of<CartProvider>(context);
+    final _offerData = Provider.of<OfferProvider>(context);
     List bestSellers = [];
     if (veganOnly) {
       bestSellers = [
@@ -57,7 +64,9 @@ class _HomePageState extends State<HomePage> {
         actions: [
           IconButton(
             tooltip: "Your Cart",
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushNamed(CartScreen.routeName);
+            },
             icon: Badge(
               badgeContent: Text(
                 "${_cartData.cartCount}",
@@ -90,7 +99,26 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              HeroOffer(title: "Choose any 2 Pizzas and get upto 40% Offer"),
+              if (_offerData.heroOffer != null)
+                HeroOfferCard(
+                  title: _offerData.heroOffer!.title,
+                  description: _offerData.heroOffer!.description,
+                  type: _offerData.heroOffer!.type,
+                  offerCode: _offerData.heroOffer!.offerCode,
+                  whenTapped: () {
+                    _cartData.copyOffer(_offerData.heroOffer!);
+                    if (_offerData.heroOffer!.type == OfferType.offerOnCart) {
+                      CustomToast(context).hideCurrentToast();
+                      CustomToast(context).showToast(
+                          "Offer Code \"${_offerData.heroOffer!.offerCode}\" Copied");
+                    } else {
+                      Navigator.of(context).pushNamed(
+                        ItemsByOfferDisplayScreen.routeName,
+                        arguments: _offerData.heroOffer!.id,
+                      );
+                    }
+                  },
+                ),
               Padding(
                 padding: const EdgeInsets.only(
                   top: 10.0,
@@ -100,17 +128,40 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: _buildHeader("More Offers"),
               ),
-              const SizedBox(
+              SizedBox(
                 width: double.infinity,
-                height: 150,
-                child: const SubOffers(),
+                height: 165,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: _offerData.subOffers.map((val) {
+                    return SubOfferCard(
+                      title: val.title,
+                      description: val.description,
+                      offerCode: val.offerCode,
+                      type: val.type,
+                      whenTapped: () {
+                        _cartData.copyOffer(val);
+                        if (val.type == OfferType.offerOnCart) {
+                          CustomToast(context).hideCurrentToast();
+                          CustomToast(context).showToast(
+                              "Offer Code \"${val.offerCode}\" Copied");
+                        } else {
+                          Navigator.of(context).pushNamed(
+                            ItemsByOfferDisplayScreen.routeName,
+                            arguments: val.id,
+                          );
+                        }
+                      },
+                    );
+                  }).toList(),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(
                   top: 10.0,
                   bottom: 8.0,
                   left:
-                      10.0, //bscially i used this because in SubOffer i have given  varites widget some extra margin
+                      10.0, //bascially i used this because in SubOffer i have given  varites widget some extra margin
                 ),
                 child: _buildHeader("Explore Our Varities"),
               ),

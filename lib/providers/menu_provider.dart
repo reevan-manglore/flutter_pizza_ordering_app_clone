@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -148,6 +150,16 @@ class MenuProvider extends ChangeNotifier {
 
   List<SidesItemProvider> findSidesByCategory(SidesCategory cat) {
     return _sides.where((element) => element.category == cat).toList();
+  }
+
+  dynamic findItemById(String id) {
+    if (_pizzas.any((element) => element.id == id)) {
+      return _pizzas.singleWhere((element) => element.id == id);
+    }
+    if (_sides.any((element) => element.id == id)) {
+      return _sides.singleWhere((element) => element.id == id);
+    }
+    return null;
   }
 }
 

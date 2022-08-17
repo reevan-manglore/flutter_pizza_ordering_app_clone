@@ -2,12 +2,48 @@ import 'package:flutter/widgets.dart';
 
 import '../models/pizza_cart_item.dart';
 import '../models/sides_cart_item.dart';
+import '../models/offer_cupon.dart';
 import '../providers/pizza_item_provider.dart';
 import '../providers/sides_item_provider.dart';
 
 class CartProvider extends ChangeNotifier {
   final List<PizzaCartItem> _cartPizzaItems = [];
   final List<SidesCartItem> _cartSidesItems = [];
+  OfferCoupon? _copiedCoupon;
+  dynamic get cartItems {
+    return [..._cartPizzaItems, ..._cartSidesItems];
+  }
+
+  List<PizzaCartItem> get pizzas {
+    return _cartPizzaItems;
+  }
+
+  List<SidesCartItem> get sides {
+    return _cartSidesItems;
+  }
+
+  void getGroupedPizzas() {
+    Map<PizzaCartItem, int> items = {};
+    for (PizzaCartItem pizzaItem in _cartPizzaItems) {
+      PizzaCartItem? foundSimilarPizza;
+      for (PizzaCartItem i in items.keys) {
+        if (pizzaItem == i) {
+          foundSimilarPizza = i;
+          break;
+        }
+      }
+
+      if (foundSimilarPizza == null) {
+        items[pizzaItem] = 1;
+      } else {
+        items[foundSimilarPizza] = items[foundSimilarPizza]! + 1;
+      }
+    }
+    print(items);
+    // for (var element in items.entries) {
+    //   log("object is ${element.key},${element.value}");
+    // }
+  }
 
   void addPizza(PizzaCartItem pizza) {
     _cartPizzaItems.add(pizza);
@@ -58,5 +94,23 @@ class CartProvider extends ChangeNotifier {
 
   int get cartCount {
     return _cartPizzaItems.length + _cartSidesItems.length;
+  }
+
+  int get cartTotalAmount {
+    int amount = 0;
+    amount = _cartPizzaItems.fold<int>(
+        amount, (previousValue, element) => previousValue + element.itemPrice);
+    amount = _cartSidesItems.fold<int>(
+        amount, (previousValue, element) => previousValue + element.itemPrice);
+    return amount;
+  }
+
+  OfferCoupon? get copiedOffer {
+    return _copiedCoupon;
+  }
+
+  void copyOffer(OfferCoupon cupon) {
+    _copiedCoupon = cupon;
+    notifyListeners();
   }
 }

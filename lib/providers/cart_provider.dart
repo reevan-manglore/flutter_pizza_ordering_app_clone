@@ -22,7 +22,7 @@ class CartProvider extends ChangeNotifier {
     return _cartSidesItems;
   }
 
-  void getGroupedPizzas() {
+  Map<PizzaCartItem, int> getGroupedPizzas() {
     Map<PizzaCartItem, int> items = {};
     for (PizzaCartItem pizzaItem in _cartPizzaItems) {
       PizzaCartItem? foundSimilarPizza;
@@ -39,10 +39,30 @@ class CartProvider extends ChangeNotifier {
         items[foundSimilarPizza] = items[foundSimilarPizza]! + 1;
       }
     }
-    print(items);
-    // for (var element in items.entries) {
-    //   log("object is ${element.key},${element.value}");
-    // }
+    return items;
+  }
+
+  void removePizzasWhichAreSimilar(PizzaCartItem similarPizza) {
+    _cartPizzaItems.removeWhere((element) => element == similarPizza);
+    notifyListeners();
+  }
+
+  void removeSidesWhichAreSimilar(SidesCartItem similarSides) {
+    _cartSidesItems.removeWhere((element) => element == similarSides);
+    notifyListeners();
+  }
+
+  Map<SidesCartItem, int> getGroupedSidesItem() {
+    Map<SidesCartItem, int> items = {};
+    for (SidesCartItem sidesItem in _cartSidesItems) {
+      if (items.containsKey(sidesItem)) {
+        items[sidesItem] = items[sidesItem]! + 1;
+      } else {
+        items[sidesItem] = 1;
+      }
+    }
+
+    return items;
   }
 
   void addPizza(PizzaCartItem pizza) {

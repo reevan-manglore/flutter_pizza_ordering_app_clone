@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
 import '../models/offer_cupon.dart';
 
 class OfferProvider with ChangeNotifier {

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/widgets.dart';
 
 import '../models/pizza_cart_item.dart';
@@ -132,5 +134,47 @@ class CartProvider extends ChangeNotifier {
   void copyOffer(OfferCoupon cupon) {
     _copiedCoupon = cupon;
     notifyListeners();
+  }
+
+  void resetAppliedCoupon() {
+    _copiedCoupon = null;
+    notifyListeners();
+  }
+
+  int get discount {
+    if (_copiedCoupon == null) {
+      return 0;
+    }
+
+    if (_copiedCoupon!.type == OfferType.offerOnCart &&
+        cartTotalAmount >= (_copiedCoupon as CartOffer).minValue) {
+      return min(
+        (cartTotalAmount * _copiedCoupon!.discountPercentage / 100).floor(),
+        _copiedCoupon!.maxDiscountAmount,
+      );
+    }
+
+    int discount = 0;
+    if (_copiedCoupon!.type == OfferType.offerOnItem) {
+      final coupon = copiedOffer as ItemOffer;
+      for (PizzaCartItem pizza in _cartPizzaItems) {
+        if (coupon.applicableItems.contains(pizza.pizza.id)) {
+          discount +=
+              (pizza.itemPrice * coupon.discountPercentage / 100).ceil();
+        }
+        if (discount >= coupon.maxDiscountAmount) {
+          return min(discount, coupon.maxDiscountAmount);
+        }
+      }
+      for (SidesCartItem side in _cartSidesItems) {
+        if (coupon.applicableItems.contains(side.side.id)) {
+          discount += (side.itemPrice * coupon.discountPercentage / 100).ceil();
+        }
+        if (discount >= coupon.maxDiscountAmount) {
+          return min(discount, coupon.maxDiscountAmount);
+        }
+      }
+    }
+    return min(discount, _copiedCoupon!.maxDiscountAmount);
   }
 }

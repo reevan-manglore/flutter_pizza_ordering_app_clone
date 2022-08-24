@@ -1,6 +1,7 @@
 import 'dart:developer';
-
 import 'package:flutter/widgets.dart';
+
+import '../providers/cart_provider.dart';
 import '../models/offer_cupon.dart';
 
 class OfferProvider with ChangeNotifier {
@@ -70,5 +71,23 @@ class OfferProvider with ChangeNotifier {
 
   OfferCoupon getOfferById(String id) {
     return _offers.singleWhere((element) => element.id == id);
+  }
+
+  List<OfferCoupon> getCouponsBasedOnCartItems(CartProvider cartData) {
+    Set<OfferCoupon> items = {};
+    final itemOffers = _offers.whereType<ItemOffer>().toList();
+    final cartOffers = _offers.whereType<CartOffer>().toList();
+    for (final i in cartData.pizzas) {
+      items.addAll(itemOffers
+          .where((element) => element.applicableItems.contains(i.pizza.id)));
+    }
+    for (final i in cartData.sides) {
+      items.addAll(itemOffers
+          .where((element) => element.applicableItems.contains(i.side.id)));
+    }
+
+    items.addAll(cartOffers
+        .where((element) => cartData.cartTotalAmount >= element.minValue));
+    return items.toList();
   }
 }

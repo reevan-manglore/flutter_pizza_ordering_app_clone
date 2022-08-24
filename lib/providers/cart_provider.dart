@@ -177,4 +177,40 @@ class CartProvider extends ChangeNotifier {
     }
     return min(discount, _copiedCoupon!.maxDiscountAmount);
   }
+
+  int getDiscountForOfferCoupon(OfferCoupon? offerCoupon) {
+    if (offerCoupon == null) {
+      return 0;
+    }
+    if (offerCoupon.type == OfferType.offerOnCart &&
+        cartTotalAmount >= (offerCoupon as CartOffer).minValue) {
+      return min(
+        (cartTotalAmount * offerCoupon.discountPercentage / 100).floor(),
+        offerCoupon.maxDiscountAmount,
+      );
+    }
+
+    int discount = 0;
+    if (offerCoupon.type == OfferType.offerOnItem) {
+      final coupon = offerCoupon as ItemOffer;
+      for (PizzaCartItem pizza in _cartPizzaItems) {
+        if (coupon.applicableItems.contains(pizza.pizza.id)) {
+          discount +=
+              (pizza.itemPrice * coupon.discountPercentage / 100).ceil();
+        }
+        if (discount >= coupon.maxDiscountAmount) {
+          return min(discount, coupon.maxDiscountAmount);
+        }
+      }
+      for (SidesCartItem side in _cartSidesItems) {
+        if (coupon.applicableItems.contains(side.side.id)) {
+          discount += (side.itemPrice * coupon.discountPercentage / 100).ceil();
+        }
+        if (discount >= coupon.maxDiscountAmount) {
+          return min(discount, coupon.maxDiscountAmount);
+        }
+      }
+    }
+    return min(discount, offerCoupon.maxDiscountAmount);
+  }
 }

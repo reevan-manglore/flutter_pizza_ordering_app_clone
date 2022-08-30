@@ -5,6 +5,7 @@ import '../../providers/offer_provider.dart';
 import '../../providers/menu_provider.dart';
 import '../../providers/pizza_item_provider.dart';
 import '../../providers/sides_item_provider.dart';
+import '../../providers/vegan_preferance_provider.dart';
 
 import '../../models/offer_cupon.dart';
 
@@ -25,7 +26,7 @@ class _ItemsByOfferDisplayScreenState extends State<ItemsByOfferDisplayScreen> {
   bool didChangeDependencyRun = false;
   late final String offerId;
   late final ItemOffer offerData;
-  bool veganOnly = false;
+  late VeganPreferanceProvider veganPreferance;
   List<PizzaItemProvider> _pizzas = [];
   List<SidesItemProvider> _sides = [];
   @override
@@ -34,7 +35,7 @@ class _ItemsByOfferDisplayScreenState extends State<ItemsByOfferDisplayScreen> {
       offerId = ModalRoute.of(context)!.settings.arguments as String;
       offerData = Provider.of<OfferProvider>(context).getOfferById(offerId)
           as ItemOffer;
-
+      veganPreferance = Provider.of<VeganPreferanceProvider>(context);
       didChangeDependencyRun = true;
       super.didChangeDependencies();
     }
@@ -64,23 +65,21 @@ class _ItemsByOfferDisplayScreenState extends State<ItemsByOfferDisplayScreen> {
             ),
             Expanded(
               child: InkWell(
-                onTap: () => setState(() {
-                  veganOnly = !veganOnly;
-                }),
+                onTap: veganPreferance.toggleVegan,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Switch(
-                      value: veganOnly,
-                      onChanged: (val) => setState(() {
-                        veganOnly = val;
-                      }),
+                      value: veganPreferance.isveganOnly,
+                      onChanged: (_) => veganPreferance.toggleVegan(),
                       activeColor: Colors.green,
                     ),
                     Text(
                       "Veg Only",
                       style: Theme.of(context).textTheme.subtitle2!.copyWith(
-                            color: veganOnly ? Colors.green : null,
+                            color: veganPreferance.isveganOnly
+                                ? Colors.green
+                                : null,
                           ),
                     ),
                   ],
@@ -103,13 +102,15 @@ class _ItemsByOfferDisplayScreenState extends State<ItemsByOfferDisplayScreen> {
         continue;
       }
       if (item.runtimeType == PizzaItemProvider) {
-        if (veganOnly && !((item as PizzaItemProvider).isVegan)) {
+        if (veganPreferance.isveganOnly &&
+            !((item as PizzaItemProvider).isVegan)) {
           //if veganOnly true PizzaItemProvider not vegan then return
           continue;
         }
         _pizzas.add(item);
       } else {
-        if (veganOnly && !((item as SidesItemProvider).isVegan)) {
+        if (veganPreferance.isveganOnly &&
+            !((item as SidesItemProvider).isVegan)) {
           //if veganOnly true PizzaItemProvider not vegan then return
           continue;
         }

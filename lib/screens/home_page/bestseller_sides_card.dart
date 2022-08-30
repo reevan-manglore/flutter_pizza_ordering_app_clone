@@ -2,13 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/sides_item_provider.dart';
-import '../../widgets/numberd_button.dart';
+import '../../providers/cart_provider.dart';
+
+import '../../models/sides_cart_item.dart';
+
+import '../../screens/cart_screen/cart_screen.dart';
+
 import '../../widgets/vegan_indicator.dart';
 
 class BestSellerSidesCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final data = Provider.of<SidesItemProvider>(context);
+    final cartData = Provider.of<CartProvider>(context, listen: false);
     return Card(
       clipBehavior: Clip.hardEdge,
       shape: RoundedRectangleBorder(
@@ -81,6 +87,8 @@ class BestSellerSidesCard extends StatelessWidget {
                   children: [
                     Text(
                       data.sidesName,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.start,
                       style: Theme.of(context).textTheme.headline5,
                     ),
@@ -102,11 +110,20 @@ class BestSellerSidesCard extends StatelessWidget {
                     ),
                     Align(
                       alignment: Alignment.centerRight,
-                      child: NumberdButton(
-                        0,
-                        label: "Add to cart",
-                        onIncrementPressed: () {},
-                        onDecrementPressed: () {},
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.shopping_cart_checkout_rounded),
+                        label: const Text("Quick Checkout"),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15.0, vertical: 10.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onPressed: () {
+                          cartData.addSide(SidesCartItem(data, data.price));
+                          Navigator.of(context).pushNamed(CartScreen.routeName);
+                        },
                       ),
                     ),
                   ],

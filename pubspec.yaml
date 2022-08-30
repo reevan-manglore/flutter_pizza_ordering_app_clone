@@ -38,7 +38,7 @@ dependencies:
   badges: ^2.0.3
   fluttertoast: ^8.0.9
   intl: ^0.17.0
-
+  confetti: ^0.7.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

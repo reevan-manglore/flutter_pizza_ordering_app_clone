@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/pizza_item_provider.dart';
+import '../../providers/cart_provider.dart';
+
+import '../../models/pizza_cart_item.dart';
 
 import '../customization_screen/customization_screen.dart';
+import '../../screens/cart_screen/cart_screen.dart';
 
-import '../../widgets/numberd_button.dart';
 import '../../widgets/vegan_indicator.dart';
 
 class BestSellerPizzaCard extends StatefulWidget {
@@ -16,11 +19,13 @@ class BestSellerPizzaCard extends StatefulWidget {
 class _BestSellerPizzaCardState extends State<BestSellerPizzaCard> {
   PizzaSizes _choosenSize = PizzaSizes.small;
   late PizzaItemProvider data;
+  late CartProvider cartData;
   bool didChangeDependencyRun = false;
   @override
   void didChangeDependencies() {
     if (!didChangeDependencyRun) {
       data = Provider.of<PizzaItemProvider>(context);
+      cartData = Provider.of<CartProvider>(context, listen: false);
       _choosenSize = data.price.keys.contains(PizzaSizes.medium)
           ? PizzaSizes.medium
           : data.price.keys.first;
@@ -130,7 +135,9 @@ class _BestSellerPizzaCardState extends State<BestSellerPizzaCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        data.pizzaName,
+                        data.pizzaName, //max charcters supported is 24
+                        maxLines: 2,
+                        overflow: TextOverflow.clip,
                         textAlign: TextAlign.start,
                         style: Theme.of(context).textTheme.headline5,
                       ),
@@ -172,11 +179,27 @@ class _BestSellerPizzaCardState extends State<BestSellerPizzaCard> {
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                          NumberdButton(
-                            2,
-                            label: "Add To Cart",
-                            onIncrementPressed: () {},
-                            onDecrementPressed: () {},
+                          ElevatedButton.icon(
+                            icon: const Icon(
+                                Icons.shopping_cart_checkout_rounded),
+                            label: const Text("Quick Checkout"),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15.0, vertical: 10.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            onPressed: () {
+                              cartData.addPizza(
+                                PizzaCartItem(
+                                    pizza: data,
+                                    selectedSize: _choosenSize,
+                                    itemPrice: data.price[_choosenSize]!),
+                              );
+                              Navigator.of(context)
+                                  .pushNamed(CartScreen.routeName);
+                            },
                           ),
                         ],
                       )

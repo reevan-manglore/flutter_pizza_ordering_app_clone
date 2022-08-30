@@ -6,6 +6,7 @@ import './providers/menu_provider.dart';
 import 'providers/toppings_provider.dart';
 import './providers/cart_provider.dart';
 import './providers/offer_provider.dart';
+import 'providers/vegan_preferance_provider.dart';
 
 import 'screens/home_page/home_page.dart';
 import 'screens/customization_screen/customization_screen.dart';
@@ -33,6 +34,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => CartProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => VeganPreferanceProvider(),
         ),
         ChangeNotifierProvider(
           create: (context) => OfferProvider(),

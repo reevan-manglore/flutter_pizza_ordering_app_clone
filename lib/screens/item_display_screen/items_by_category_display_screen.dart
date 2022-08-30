@@ -8,6 +8,7 @@ import './pizza_item_display_card.dart';
 import '../../providers/pizza_item_provider.dart';
 import '../../providers/sides_item_provider.dart';
 import '../../providers/menu_provider.dart';
+import '../../providers/vegan_preferance_provider.dart';
 import '../../providers/cart_provider.dart';
 
 class ItemsByCategoryDisplayScreen extends StatefulWidget {
@@ -22,7 +23,6 @@ class ItemsByCategoryDisplayScreen extends StatefulWidget {
 
 class _ItemsByCategoryDisplayScreenState
     extends State<ItemsByCategoryDisplayScreen> {
-  bool veganOnly = false;
   bool isPizzaCategory = false;
   String argument = "";
   bool didChangeDependenciesRun = false;
@@ -45,6 +45,7 @@ class _ItemsByCategoryDisplayScreenState
 
   @override
   Widget build(BuildContext context) {
+    final veganPreferance = Provider.of<VeganPreferanceProvider>(context);
     switch (argument.toLowerCase()) {
       case "veg pizza":
         _pizzas = Provider.of<MenuProvider>(context).veganPizzas
@@ -58,7 +59,7 @@ class _ItemsByCategoryDisplayScreenState
         _sides = Provider.of<MenuProvider>(context)
             .findSidesByCategory(SidesCategory.snacks)
             .where((element) {
-          if (veganOnly == true) {
+          if (veganPreferance.isveganOnly == true) {
             return element.isVegan == true;
           } else {
             return true;
@@ -111,23 +112,21 @@ class _ItemsByCategoryDisplayScreenState
                 ),
                 if (!isPizzaCategory)
                   InkWell(
-                    onTap: () => setState(() {
-                      veganOnly = !veganOnly;
-                    }),
+                    onTap: veganPreferance.toggleVegan,
                     child: Row(
                       children: [
                         Switch(
-                          value: veganOnly,
-                          onChanged: (val) => setState(() {
-                            veganOnly = val;
-                          }),
+                          value: veganPreferance.isveganOnly,
+                          onChanged: (_) => veganPreferance.toggleVegan(),
                           activeColor: Colors.green,
                         ),
                         Text(
                           "Veg Only",
                           style:
                               Theme.of(context).textTheme.subtitle2!.copyWith(
-                                    color: veganOnly ? Colors.green : null,
+                                    color: veganPreferance.isveganOnly
+                                        ? Colors.green
+                                        : null,
                                   ),
                         )
                       ],

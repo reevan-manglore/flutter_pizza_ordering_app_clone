@@ -10,7 +10,8 @@ import '../../providers/pizza_item_provider.dart';
 import '../../providers/sides_item_provider.dart';
 import "../../providers/cart_provider.dart";
 import '../../providers/offer_provider.dart';
-import '../../widgets/custom_toast.dart';
+import "../../providers/vegan_preferance_provider.dart";
+import '../../helpers/custom_toast.dart';
 
 import 'hero_offer_card.dart';
 import 'sub_offer_card.dart';
@@ -27,8 +28,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool veganOnly = false;
-
   Widget _buildHeader(String title) {
     return Text(
       title,
@@ -42,8 +41,9 @@ class _HomePageState extends State<HomePage> {
     final _pizzaProvider = Provider.of<MenuProvider>(context);
     final _cartData = Provider.of<CartProvider>(context);
     final _offerData = Provider.of<OfferProvider>(context);
+    final veganPreferance = Provider.of<VeganPreferanceProvider>(context);
     List bestSellers = [];
-    if (veganOnly) {
+    if (veganPreferance.isveganOnly) {
       bestSellers = [
         ..._pizzaProvider.bestSellerPizzas.where((ele) => ele.isVegan),
         ..._pizzaProvider
@@ -191,16 +191,13 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           InkWell(
-                            onTap: () => setState(() {
-                              veganOnly = !veganOnly;
-                            }),
+                            onTap: veganPreferance.toggleVegan,
                             child: Row(
                               children: [
                                 Switch(
-                                  value: veganOnly,
-                                  onChanged: (val) => setState(() {
-                                    veganOnly = val;
-                                  }),
+                                  value: veganPreferance.isveganOnly,
+                                  onChanged: (_) =>
+                                      veganPreferance.toggleVegan(),
                                   activeColor: Colors.green,
                                 ),
                                 Text(
@@ -209,7 +206,9 @@ class _HomePageState extends State<HomePage> {
                                       .textTheme
                                       .subtitle2!
                                       .copyWith(
-                                        color: veganOnly ? Colors.green : null,
+                                        color: veganPreferance.isveganOnly
+                                            ? Colors.green
+                                            : null,
                                       ),
                                 )
                               ],

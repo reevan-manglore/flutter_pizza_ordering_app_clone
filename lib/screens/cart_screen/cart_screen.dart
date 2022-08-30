@@ -8,6 +8,7 @@ import './cart_side_display_tile.dart';
 import '../../providers/cart_provider.dart';
 
 import '../offer_picking_screen/offer_picking_screen.dart';
+import './offer_applied_alert.dart';
 
 class CartScreen extends StatelessWidget {
   static const routeName = "/cart-screen";
@@ -52,7 +53,19 @@ class CartScreen extends StatelessWidget {
           onTap: () {
             Navigator.of(context)
                 .pushNamed(OfferPickingScreen.routeName)
-                .then((value) => print("Returned From offer picking screen"));
+                .then((_) {
+              if (cartData.copiedOffer == null) {
+                return;
+              }
+              showDialog(
+                  context: context,
+                  builder: (_) {
+                    return OfferAppliedAlert(
+                      offerCode: cartData.copiedOffer!.offerCode,
+                      discount: cartData.discount,
+                    );
+                  });
+            });
           },
           tileColor: Theme.of(context).colorScheme.primaryContainer,
           shape:
@@ -254,6 +267,8 @@ class CartScreen extends StatelessWidget {
   }
 
   Widget _buildBottomBar(BuildContext context, int amtToPay) {
+    final numFormatter =
+        NumberFormat.currency(locale: "HI", decimalDigits: 0, symbol: "");
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ClipRRect(
@@ -277,7 +292,7 @@ class CartScreen extends StatelessWidget {
                       children: [
                         const Icon(Icons.currency_rupee),
                         Text(
-                          amtToPay.toString()..padRight(3),
+                          numFormatter.format(amtToPay)..padRight(3),
                           textAlign: TextAlign.center,
                           style: const TextStyle(fontSize: 24),
                         ),

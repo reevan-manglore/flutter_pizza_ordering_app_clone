@@ -23,6 +23,8 @@ import '../cart_screen/cart_screen.dart';
 import '../item_display_screen/items_by_offer_display_screen.dart';
 
 class HomePage extends StatefulWidget {
+  static const String routeName = "/home";
+  const HomePage({Key? key}) : super(key: key);
   @override
   State<HomePage> createState() => _HomePageState();
 }

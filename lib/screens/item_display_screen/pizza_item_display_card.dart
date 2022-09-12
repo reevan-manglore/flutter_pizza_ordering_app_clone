@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:pizza_app/providers/cart_provider.dart';
 import 'package:pizza_app/screens/customization_screen/customization_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../providers/pizza_item_provider.dart';
-import '../../providers/cart_provider.dart';
 
 import '../../models/pizza_cart_item.dart';
 
@@ -62,8 +62,8 @@ class _PizzaItemDisplayCardState extends State<PizzaItemDisplayCard> {
               children: [
                 Stack(
                   children: [
-                    Image.network(
-                      data.pizzaImageUrl,
+                    CachedNetworkImage(
+                      imageUrl: data.pizzaImageUrl,
                       width: double.infinity,
                       height: 180,
                       fit: BoxFit.cover,

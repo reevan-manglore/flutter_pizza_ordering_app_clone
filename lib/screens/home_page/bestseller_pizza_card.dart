@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../providers/pizza_item_provider.dart';
 import '../../providers/cart_provider.dart';
@@ -64,8 +65,8 @@ class _BestSellerPizzaCardState extends State<BestSellerPizzaCard> {
             children: [
               Stack(
                 children: [
-                  Image.network(
-                    data.pizzaImageUrl,
+                  CachedNetworkImage(
+                    imageUrl: data.pizzaImageUrl,
                     fit: BoxFit.cover,
                     width: double.infinity,
                     height: 180,

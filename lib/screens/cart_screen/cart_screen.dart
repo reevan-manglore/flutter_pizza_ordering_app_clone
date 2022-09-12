@@ -313,10 +313,9 @@ class CartScreen extends StatelessWidget {
                     ],
                   ),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.greenAccent,
+                    foregroundColor: Colors.black, backgroundColor: Colors.greenAccent,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15)),
-                    onPrimary: Colors.black,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 15),
                   ),

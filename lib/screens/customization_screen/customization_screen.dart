@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../providers/pizza_item_provider.dart';
 import '../../providers/menu_provider.dart';
@@ -205,8 +206,8 @@ class _CustomizationScreenState extends State<CustomizationScreen> {
                   ),
                 ],
                 flexibleSpace: FlexibleSpaceBar(
-                  background: Image.network(
-                    data.pizzaImageUrl,
+                  background: CachedNetworkImage(
+                    imageUrl: data.pizzaImageUrl,
                     fit: BoxFit.cover,
                     color: Colors.black38,
                     colorBlendMode: BlendMode.darken,

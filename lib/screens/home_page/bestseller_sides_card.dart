@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../providers/sides_item_provider.dart';
 import '../../providers/cart_provider.dart';
@@ -31,8 +32,8 @@ class BestSellerSidesCard extends StatelessWidget {
           children: [
             Stack(
               children: [
-                Image.network(
-                  data.sidesImageUrl,
+                CachedNetworkImage(
+                  imageUrl: data.sidesImageUrl,
                   fit: BoxFit.cover,
                   width: double.infinity,
                   height: 180,

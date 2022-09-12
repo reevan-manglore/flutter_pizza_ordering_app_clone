@@ -8,6 +8,9 @@ import './providers/cart_provider.dart';
 import './providers/offer_provider.dart';
 import 'providers/vegan_preferance_provider.dart';
 
+import 'screens/auth_screen/authentication_screen.dart';
+import 'screens/auth_screen/login_screen.dart';
+import 'screens/auth_screen/signup_screen.dart';
 import 'screens/home_page/home_page.dart';
 import 'screens/customization_screen/customization_screen.dart';
 import 'screens/item_display_screen/items_by_category_display_screen.dart';
@@ -49,7 +52,10 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         routes: {
-          '/': (context) => HomePage(),
+          '/': (context) => const AuthenticationPage(),
+          HomePage.routeName: (context) => const HomePage(),
+          LoginScreen.routeName: (context) => const LoginScreen(),
+          SignupScreen.routeName: (context) => const SignupScreen(),
           CustomizationScreen.routeName: (context) =>
               const CustomizationScreen(),
           ItemsByCategoryDisplayScreen.routeName: (context) =>

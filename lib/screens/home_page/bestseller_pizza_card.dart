@@ -148,7 +148,7 @@ class _BestSellerPizzaCardState extends State<BestSellerPizzaCard> {
                       Expanded(
                         child: Text(
                           data.description,
-                          maxLines: 5,
+                          maxLines: 4,
                           style: const TextStyle(
                             fontSize: 15,
                           ),

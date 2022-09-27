@@ -26,6 +26,34 @@ class PizzaItemProvider with ChangeNotifier {
     isFaviourite = !isFaviourite;
     notifyListeners();
   }
+
+  factory PizzaItemProvider.fromMap(
+      String documentId, Map<String, dynamic> document) {
+    return PizzaItemProvider(
+      id: documentId,
+      pizzaName: document["itemName"],
+      description: document["itemDescription"],
+      pizzaImageUrl: document["itemImageUrl"],
+      isBestSeller: document["isBestSeller"] ?? false,
+      isCustomizable: document["isCustomizable"] ?? false,
+      isVegan: document["isVegan"] ?? false,
+      price: (document["itemPrice"] as Map<String, dynamic>).map((size, price) {
+        switch (size) {
+          case "small":
+            return MapEntry(PizzaSizes.small, price);
+          case "medium":
+            return MapEntry(PizzaSizes.medium, price);
+          case "large":
+            return MapEntry(PizzaSizes.large, price);
+          default:
+            throw ArgumentError.value(
+              {size, price},
+              "Invalid value returned from firebase",
+            );
+        }
+      }),
+    );
+  }
 }
 
 enum PizzaSizes {

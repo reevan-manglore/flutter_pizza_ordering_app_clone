@@ -48,26 +48,20 @@ class _ItemsByCategoryDisplayScreenState
     final veganPreferance = Provider.of<VeganPreferanceProvider>(context);
     switch (argument.toLowerCase()) {
       case "veg pizza":
-        _pizzas = Provider.of<MenuProvider>(context).veganPizzas
-          ..sort((_, second) =>
-              second.isBestSeller ? 1 : -1); //hack to sort by bestseller
+        _pizzas = Provider.of<MenuProvider>(context).findPizzas(
+            veganOnly: true,
+            sortByBestSeller: true); //hack to sort by bestseller
         break;
       case "non veg pizza":
-        _pizzas = Provider.of<MenuProvider>(context).nonVeganPizzas;
+        _pizzas = Provider.of<MenuProvider>(context)
+            .findPizzas(nonVeganOnly: true, sortByBestSeller: true);
         break;
       case "snacks":
-        _sides = Provider.of<MenuProvider>(context)
-            .findSidesByCategory(SidesCategory.snacks)
-            .where((element) {
-          if (veganPreferance.isveganOnly == true) {
-            return element.isVegan == true;
-          } else {
-            return true;
-          }
-        }).toList()
-          ..sort((_, second) =>
-              second.isBestSeller ? 1 : -1); //hack to sort by bestseller
-
+        _sides = Provider.of<MenuProvider>(context).findSides(
+          category: SidesCategory.snacks,
+          veganOnly: veganPreferance.isveganOnly,
+          sortByBestSeller: true,
+        );
         break;
       default:
     }

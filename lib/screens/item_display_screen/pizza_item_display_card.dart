@@ -220,15 +220,15 @@ class _PizzaItemDisplayCardState extends State<PizzaItemDisplayCard> {
                                 }
                                 switch (option) {
                                   case 1:
-                                    cartData.addPizza(previouslyAddedItem!);
-                                    break;
-                                  case 2:
                                     cartData.addPizza(
                                       PizzaCartItem(
                                           pizza: data,
                                           selectedSize: _choosenSize,
                                           itemPrice: data.price[_choosenSize]!),
                                     );
+                                    break;
+                                  case 2:
+                                    cartData.addPizza(previouslyAddedItem!);
                                     break;
                                   default:
                                 }
@@ -296,21 +296,13 @@ class BottomSheetStructure extends StatelessWidget {
             ),
           ),
           const Text(
-            "Repeat Previous Customization",
-            textAlign: TextAlign.left,
-          ),
-          _customSelectionTile(context),
-          const SizedBox(
-            height: 10.0,
-          ),
-          const Text(
-            "Or Continue With",
+            "Do You Want To Continue With",
             textAlign: TextAlign.left,
           ),
           Card(
             child: ListTile(
               onTap: () {
-                Navigator.of(context).pop<int>(2);
+                Navigator.of(context).pop<int>(1);
               },
               title: Text(
                 previouslySelectedItem.pizza.pizzaName,
@@ -338,6 +330,14 @@ class BottomSheetStructure extends StatelessWidget {
               ]),
             ),
           ),
+          const SizedBox(
+            height: 10.0,
+          ),
+          const Text(
+            "Or Repeat Previous Customization",
+            textAlign: TextAlign.left,
+          ),
+          _customSelectionTile(context),
         ],
       ),
     );
@@ -346,7 +346,7 @@ class BottomSheetStructure extends StatelessWidget {
   Widget _customSelectionTile(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.of(context).pop<int>(1);
+        Navigator.of(context).pop<int>(2);
       },
       child: Card(
         child: Padding(

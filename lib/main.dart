@@ -1,6 +1,7 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
+import "package:pizza_app/firebase_options.dart";
 
 import './providers/menu_provider.dart';
 import 'providers/toppings_provider.dart';
@@ -18,7 +19,11 @@ import 'screens/cart_screen/cart_screen.dart';
 import 'screens/item_display_screen/items_by_offer_display_screen.dart';
 import 'screens/offer_picking_screen/offer_picking_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -65,7 +70,8 @@ class MyApp extends StatelessWidget {
               const ItemsByOfferDisplayScreen(),
           OfferPickingScreen.routeName: (context) => const OfferPickingScreen(),
         },
-        initialRoute: '/',
+        // initialRoute: '/',
+        initialRoute: HomePage.routeName,
       ),
     );
   }

@@ -99,7 +99,7 @@ class BestSellerSidesCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         data.sidesDescription,
-                        maxLines: 5,
+                        maxLines: 4,
                         style: const TextStyle(
                           fontSize: 15,
                         ),

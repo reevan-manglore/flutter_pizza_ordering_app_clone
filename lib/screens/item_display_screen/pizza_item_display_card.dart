@@ -196,8 +196,9 @@ class _PizzaItemDisplayCardState extends State<PizzaItemDisplayCard> {
                               onIncrementPressed: () async {
                                 final previouslyAddedItem =
                                     cartData.getLastAddedPizzaById(data.id);
+
                                 //by defualt add current selected pizza
-                                int? option = 2;
+                                int? option = 1;
                                 if (previouslyAddedItem != null &&
                                     (previouslyAddedItem.selectedSize !=
                                             _choosenSize ||

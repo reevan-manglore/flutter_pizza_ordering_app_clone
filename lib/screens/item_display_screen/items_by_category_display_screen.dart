@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:badges/badges.dart';
 
-import './sides_item_display_card.dart';
-import './pizza_item_display_card.dart';
-
 import '../../providers/pizza_item_provider.dart';
 import '../../providers/sides_item_provider.dart';
 import '../../providers/menu_provider.dart';
 import '../../providers/vegan_preferance_provider.dart';
 import '../../providers/cart_provider.dart';
+
+import './sides_item_display_card.dart';
+import './pizza_item_display_card.dart';
+import "../cart_screen/cart_screen.dart";
 
 class ItemsByCategoryDisplayScreen extends StatefulWidget {
   static const String routeName = "/category-screen";
@@ -49,8 +50,9 @@ class _ItemsByCategoryDisplayScreenState
     switch (argument.toLowerCase()) {
       case "veg pizza":
         _pizzas = Provider.of<MenuProvider>(context).findPizzas(
-            veganOnly: true,
-            sortByBestSeller: true); //hack to sort by bestseller
+          veganOnly: true,
+          sortByBestSeller: true,
+        );
         break;
       case "non veg pizza":
         _pizzas = Provider.of<MenuProvider>(context)
@@ -71,7 +73,9 @@ class _ItemsByCategoryDisplayScreenState
         actions: [
           IconButton(
             tooltip: "Your Cart",
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushNamed(CartScreen.routeName);
+            },
             icon: Consumer<CartProvider>(
               builder: (context, cartData, _) => Badge(
                 alignment: Alignment.topLeft,

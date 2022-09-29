@@ -20,6 +20,8 @@ import './bestseller_sides_card.dart';
 import '../cart_screen/cart_screen.dart';
 import '../item_display_screen/items_by_offer_display_screen.dart';
 
+import '../../helpers/error_section.dart';
+
 class HomePage extends StatefulWidget {
   static const String routeName = "/home";
   const HomePage({Key? key}) : super(key: key);
@@ -52,6 +54,15 @@ class _HomePageState extends State<HomePage> {
             bestSellersOnly: true,
             veganOnly: veganPreferance.isveganOnly),
       ];
+    }
+    if (_menuData.hasError) {
+      String? errmsg = _menuData.errMsg ?? null;
+      return ErrorSection(
+        errMsg: errmsg ?? "Something has gone wrong",
+        actionBtnHandler: () {
+          _menuData.fetchAndSetProducts();
+        },
+      );
     }
     return Scaffold(
       appBar: AppBar(

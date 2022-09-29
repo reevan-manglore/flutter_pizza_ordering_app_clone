@@ -1,6 +1,8 @@
 import 'dart:developer';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import "package:connectivity_plus/connectivity_plus.dart";
 
 import './sides_item_provider.dart';
 import './pizza_item_provider.dart';
@@ -9,6 +11,9 @@ class MenuProvider extends ChangeNotifier {
   List<PizzaItemProvider> _pizzas = [];
   List<SidesItemProvider> _sides = [];
   bool _isLoading = false;
+  bool _hasError = true;
+  String? _errMsg;
+
   List<PizzaItemProvider> get pizzas {
     return _pizzas;
   }
@@ -23,11 +28,22 @@ class MenuProvider extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
 
+  bool get hasError => _hasError;
+
+  String? get errMsg => _errMsg;
+
   Future<void> fetchAndSetProducts() async {
     try {
       final List<PizzaItemProvider> tempPizzaArr = [];
       final List<SidesItemProvider> tempSidesArr = [];
       _isLoading = true;
+      _hasError = false; //if in case _hasError is true
+      _errMsg = null;
+      final conectivityReult = await Connectivity().checkConnectivity();
+      if (conectivityReult == ConnectivityResult.none) {
+        throw const SocketException("Sorry internet connection not found");
+      }
+
       /*
         here whenever we call notify listeners in middle of  build process i.e is during inital fetch
         (when home page is loaded) it requests the Flutter Framework to rebuild it 
@@ -55,10 +71,19 @@ class MenuProvider extends ChangeNotifier {
       _sides = tempSidesArr;
       _pizzas.add(_samplePizza);
       _sides.add(_sampleSide);
-      _isLoading = false;
-      notifyListeners();
+    } on SocketException catch (e) {
+      log("there was some problem in clients internet connection$e");
+      _errMsg = e.message;
+      _hasError = true;
+    } on FirebaseException catch (e) {
+      log("there was some problem while fetching data $e");
+      _errMsg = e.message;
+      _hasError = true;
     } catch (e) {
-      log("some error occured durin fetching $e");
+      log("there was some error $e");
+      _errMsg = e.toString();
+      _hasError = true;
+    } finally {
       _isLoading = false;
       notifyListeners();
     }

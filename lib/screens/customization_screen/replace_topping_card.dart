@@ -180,10 +180,12 @@ class ReplaceToppingCard extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Theme(
                       data: Theme.of(context).copyWith(
-                          chipTheme: ChipThemeData(
-                        showCheckmark: true,
-                        selectedColor: Theme.of(context).primaryColor,
-                      )),
+                        chipTheme: ChipThemeData(
+                          showCheckmark: true,
+                          selectedColor: Theme.of(context).primaryColor,
+                          padding: const EdgeInsets.all(4.0),
+                        ),
+                      ),
                       child: InputChip(
                         checkmarkColor: Theme.of(context).colorScheme.onPrimary,
                         selected: toppingToBeReplaced ==

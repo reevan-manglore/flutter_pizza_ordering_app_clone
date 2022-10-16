@@ -23,7 +23,7 @@ import '../item_display_screen/items_by_offer_display_screen.dart';
 import '../../helpers/error_section.dart';
 
 class HomePage extends StatefulWidget {
-  static const String routeName = "/home";
+  static const String routeName = "/";
   const HomePage({Key? key}) : super(key: key);
   @override
   State<HomePage> createState() => _HomePageState();
@@ -33,6 +33,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     Provider.of<MenuProvider>(context, listen: false).fetchAndSetProducts();
+    Provider.of<OfferProvider>(context, listen: false).fetchAndSetOffers();
     super.initState();
   }
 
@@ -55,12 +56,21 @@ class _HomePageState extends State<HomePage> {
             veganOnly: veganPreferance.isveganOnly),
       ];
     }
-    if (_menuData.hasError) {
-      String? errmsg = _menuData.errMsg ?? null;
+    if (_menuData.hasError || _offerData.hasError) {
+      String? errmsg =
+          _menuData.hasError ? _menuData.errMsg : _offerData.errMsg;
+      /*
+        in above line if errMsg of _menuData is null thwn _pfferdata is evaulated 
+        if errMsg of _offerData is also null then null is returned as value to errMsg
+      */
       return ErrorSection(
         errMsg: errmsg ?? "Something has gone wrong",
         actionBtnHandler: () {
-          _menuData.fetchAndSetProducts();
+          if (_menuData.hasError) {
+            _menuData.fetchAndSetProducts();
+          } else {
+            _offerData.fetchAndSetOffers();
+          }
         },
       );
     }
@@ -100,7 +110,7 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
-      body: _menuData.isLoading
+      body: _menuData.isLoading || _offerData.isLoading
           ? const Center(
               child: CircularProgressIndicator(),
             )

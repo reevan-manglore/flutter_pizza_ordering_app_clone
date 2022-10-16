@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 
 import '../home_page/home_page.dart';
 
@@ -68,11 +70,36 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                           AuthenticationForm(
                             onFormSaved: (email, password) async {
-                              log("$email  $password");
-                              await Future.delayed(const Duration(seconds: 2));
-                              Navigator.of(context).pushNamedAndRemoveUntil(
-                                  HomePage.routeName,
-                                  (_) => false); //remove all previous routes
+                              try {
+                                log("$email  $password");
+                                await FirebaseAuth.instance
+                                    .createUserWithEmailAndPassword(
+                                  email: email,
+                                  password: password,
+                                );
+
+                                await Future.delayed(
+                                    const Duration(seconds: 5));
+                                if (!mounted) return;
+                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                    HomePage.routeName,
+                                    (_) => false); //remove all previous routes
+                              } on FirebaseAuthException catch (e) {
+                                ScaffoldMessenger.of(context)
+                                    .removeCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  _buildSnackbar(e.message, context),
+                                );
+                              } catch (e) {
+                                print(e);
+                                ScaffoldMessenger.of(context)
+                                    .removeCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  _buildSnackbar(
+                                      "some error occured while authenticating",
+                                      context),
+                                );
+                              }
                             },
                             label: "Sign Up",
                           ),
@@ -86,6 +113,15 @@ class _SignupScreenState extends State<SignupScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  SnackBar _buildSnackbar(String? message, BuildContext context) {
+    return SnackBar(
+      content: Text(
+        message ?? "Some error has occured  in firebase",
+      ),
+      backgroundColor: Theme.of(context).colorScheme.error,
     );
   }
 }

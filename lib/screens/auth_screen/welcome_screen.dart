@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 
 import './login_screen.dart';
 import './signup_screen.dart';
+import "../home_page/home_page.dart";
 
-class AuthenticationPage extends StatelessWidget {
-  const AuthenticationPage({Key? key}) : super(key: key);
+class WelcomePage extends StatelessWidget {
+  const WelcomePage({Key? key}) : super(key: key);
 
-  static const String routeName = "/";
+  static const String routeName = "/auth-page";
 
   @override
   Widget build(BuildContext context) {

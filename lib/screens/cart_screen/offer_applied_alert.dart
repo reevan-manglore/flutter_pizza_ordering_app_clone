@@ -21,7 +21,7 @@ class _OfferAppliedAlertState extends State<OfferAppliedAlert> {
   void initState() {
     super.initState();
     controller = ConfettiController(
-      duration: const Duration(seconds: 1),
+      duration: const Duration(milliseconds: 100),
     );
     controller.play();
   }
@@ -116,8 +116,7 @@ class _OfferAppliedAlertState extends State<OfferAppliedAlert> {
             Colors.yellow
           ],
           blastDirectionality: BlastDirectionality.explosive,
-          numberOfParticles: 10,
-          gravity: 0.7,
+          numberOfParticles: 50,
         ),
       ),
     ]);

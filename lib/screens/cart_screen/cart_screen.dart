@@ -51,6 +51,7 @@ class CartScreen extends StatelessWidget {
       return Card(
         child: ListTile(
           onTap: () {
+            cartData.resetAppliedCoupon();
             Navigator.of(context)
                 .pushNamed(OfferPickingScreen.routeName)
                 .then((_) {
@@ -313,7 +314,8 @@ class CartScreen extends StatelessWidget {
                     ],
                   ),
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black, backgroundColor: Colors.greenAccent,
+                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.greenAccent,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15)),
                     padding: const EdgeInsets.symmetric(

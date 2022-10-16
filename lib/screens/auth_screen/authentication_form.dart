@@ -114,6 +114,7 @@ class _AuthenticationFormState extends State<AuthenticationForm> {
                         _emailController.text,
                         _passwordController.text,
                       );
+                      if (!mounted) return;
                       setState(() {
                         _isAuthenticating = false;
                       });

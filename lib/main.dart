@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import "package:pizza_app/firebase_options.dart";
+import "package:firebase_auth/firebase_auth.dart";
+import 'package:tuple/tuple.dart';
 
 import './providers/menu_provider.dart';
 import 'providers/toppings_provider.dart';
@@ -9,7 +11,7 @@ import './providers/cart_provider.dart';
 import './providers/offer_provider.dart';
 import 'providers/vegan_preferance_provider.dart';
 
-import 'screens/auth_screen/authentication_screen.dart';
+import 'screens/auth_screen/welcome_screen.dart';
 import 'screens/auth_screen/login_screen.dart';
 import 'screens/auth_screen/signup_screen.dart';
 import 'screens/home_page/home_page.dart';
@@ -49,16 +51,28 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => OfferProvider(),
         ),
+        StreamProvider.value(
+          value: FirebaseAuth.instance.authStateChanges(),
+          initialData: null,
+        ),
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Pizza App',
         theme: ThemeData(
           colorSchemeSeed: const Color(0xFF006491),
           useMaterial3: true,
         ),
+        home: Consumer<User?>(
+          builder: (context, user, child) {
+            if (user == null) {
+              return const WelcomePage();
+            }
+            return const HomePage();
+          },
+        ),
         routes: {
-          '/': (context) => const AuthenticationPage(),
-          HomePage.routeName: (context) => const HomePage(),
+          // '/': (context) => const HomePage(),
+          WelcomePage.routeName: (context) => const WelcomePage(),
           LoginScreen.routeName: (context) => const LoginScreen(),
           SignupScreen.routeName: (context) => const SignupScreen(),
           CustomizationScreen.routeName: (context) =>
@@ -71,7 +85,7 @@ class MyApp extends StatelessWidget {
           OfferPickingScreen.routeName: (context) => const OfferPickingScreen(),
         },
         // initialRoute: '/',
-        initialRoute: HomePage.routeName,
+        // initialRoute: AuthenticationPage.routeName,
       ),
     );
   }

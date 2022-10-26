@@ -76,10 +76,11 @@ class UserAccountProvider with ChangeNotifier {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
     final instance = FirebaseFirestore.instance.collection("users");
-    await instance.add({
+    await instance.doc(user.uid).set({
       "uid": user.uid,
       "name": name,
       "phoneNumber": phoneNumber,
+      "favourites": [],
       "savedAddresses": [
         {
           "placeName": address,

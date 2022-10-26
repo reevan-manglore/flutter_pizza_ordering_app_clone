@@ -197,7 +197,7 @@ class _CustomizationScreenState extends State<CustomizationScreen> {
                       data.toogleFaviourite();
                     },
                     icon: Icon(
-                      data.isFaviourite
+                      data.isFavourite
                           ? Icons.favorite_rounded
                           : Icons.favorite_outline_rounded,
                       color: Colors.red.shade300,

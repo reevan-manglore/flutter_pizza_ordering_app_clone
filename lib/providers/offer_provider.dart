@@ -20,6 +20,7 @@ class OfferProvider with ChangeNotifier {
   String? get errMsg => _errMsg;
 
   Future<void> fetchAndSetOffers() async {
+    if (isLoading) return;
     try {
       final List<OfferCoupon> tempOfferArr = [];
       _isLoading = true;

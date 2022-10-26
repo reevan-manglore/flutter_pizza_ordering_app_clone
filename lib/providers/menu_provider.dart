@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:connectivity_plus/connectivity_plus.dart";
 
@@ -33,6 +34,7 @@ class MenuProvider extends ChangeNotifier {
   String? get errMsg => _errMsg;
 
   Future<void> fetchAndSetProducts() async {
+    if (isLoading) return;
     try {
       final List<PizzaItemProvider> tempPizzaArr = [];
       final List<SidesItemProvider> tempSidesArr = [];
@@ -55,16 +57,35 @@ class MenuProvider extends ChangeNotifier {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         notifyListeners();
       });
+      final uid = FirebaseAuth.instance.currentUser?.uid;
       final queySnapshot =
           await FirebaseFirestore.instance.collection("menuItems").get();
+      final userSnapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .where("uid", isEqualTo: uid)
+          .get();
       final menuItems = queySnapshot.docs;
+      late List<dynamic>? userFavourites;
+      //if in case faviourites field is not present than when referncing
+      //faviourites field will throw array so i enclosed in try catch
+      try {
+        userFavourites =
+            userSnapshot.docs.first["favourites"] as List<dynamic>?;
+      } catch (e) {
+        userFavourites = null;
+      }
+
       for (var element in menuItems) {
+        final isItemUserFavourite = userFavourites == null
+            ? false
+            : userFavourites.contains(element.id);
+        log("${element.id} is faviourite $isItemUserFavourite");
         if (element.data()["itemType"] == "pizza") {
-          tempPizzaArr
-              .add(PizzaItemProvider.fromMap(element.id, element.data()));
+          tempPizzaArr.add(PizzaItemProvider.fromMap(element.id, element.data(),
+              isFavourite: isItemUserFavourite));
         } else {
-          tempSidesArr
-              .add(SidesItemProvider.fromMap(element.id, element.data()));
+          tempSidesArr.add(SidesItemProvider.fromMap(element.id, element.data(),
+              isFavourite: isItemUserFavourite));
         }
       }
       _pizzas = tempPizzaArr;

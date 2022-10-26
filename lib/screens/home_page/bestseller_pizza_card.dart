@@ -86,7 +86,7 @@ class _BestSellerPizzaCardState extends State<BestSellerPizzaCard> {
                     child: IconButton(
                       onPressed: data.toogleFaviourite,
                       icon: Icon(
-                        data.isFaviourite
+                        data.isFavourite
                             ? Icons.favorite
                             : Icons.favorite_border_outlined,
                         color: Colors.red.shade300,

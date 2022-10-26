@@ -1,37 +1,115 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../models/user_address.dart';
 
 class UserAccountProvider with ChangeNotifier {
-  late String name;
-  late String phoneNumber;
-  late String emailAddress;
-  bool _isLoggedIn = true;
-  bool get isLoggedIn => _isLoggedIn;
+  String _name = "";
+  String _phoneNumber = "";
 
-  void login() {
-    _isLoggedIn = true;
+  List<UserAddress> _savedAddresses = [];
+  bool _isRegisterd = false;
+  bool _isLoading = false;
+
+  UserAccountProvider() {
+    fetchAndSetUser();
+  }
+
+  //try to fetch user details if user is registerd then this returns true or else false
+  Future<bool> fetchAndSetUser() async {
+    _isRegisterd = false;
+    _isLoading = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
+
+    if (FirebaseAuth.instance.currentUser == null) {
+      _isLoading = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+      return false;
+    }
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection("users")
+        .where(
+          "uid",
+          isEqualTo: uid,
+        )
+        .get();
+    if (querySnapshot.docs.isEmpty) {
+      _isLoading = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+      return false;
+    }
+    final docs = querySnapshot.docs.first.data();
+    _name = docs["name"];
+    _phoneNumber = docs["phoneNumber"];
+
+    for (var element in docs["savedAddresses"] as List<dynamic>) {
+      _savedAddresses.add(UserAddress.fromMap(element));
+    }
+    _isLoading = false;
+    _isRegisterd = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
+    return true;
+  }
+
+  Future<void> createNewUser({
+    required String name,
+    required String phoneNumber,
+    required String address,
+    required double latitude,
+    required double longitude,
+    required String tag,
+  }) async {
+    _isRegisterd = false;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final instance = FirebaseFirestore.instance.collection("users");
+    await instance.add({
+      "uid": user.uid,
+      "name": name,
+      "phoneNumber": phoneNumber,
+      "savedAddresses": [
+        {
+          "placeName": address,
+          "latitude": latitude,
+          "longitude": longitude,
+          "geoHash": UserAddress.getGeoHashFromLatLang(
+            latitude: latitude,
+            longitude: longitude,
+          ),
+          "tag": tag
+        }
+      ],
+    });
+    _name = name;
+
+    _phoneNumber = phoneNumber;
+    _savedAddresses = [
+      UserAddress(
+        address: address,
+        latitude: latitude,
+        longitude: longitude,
+        tag: tag,
+      )
+    ];
+    _isRegisterd = true;
     notifyListeners();
   }
 
-  void logout() {
-    _isLoggedIn = false;
-    notifyListeners();
-  }
-
-  void setAccountDetails(
-      {required name, required phoneNumber, required emailAddress}) {
-    this.name = name;
-    this.phoneNumber = phoneNumber;
-    this.emailAddress = emailAddress;
-    notifyListeners();
-  }
-
-  void updateName(String name) {
-    this.name = name;
-    notifyListeners();
-  }
-
-  void updateEmailAddress(String email) {
-    emailAddress = email;
-    notifyListeners();
-  }
+  String get name => _name;
+  String get phoneNumber => _phoneNumber;
+  bool get isRegisterd => _isRegisterd;
+  bool get isLoading => _isLoading;
 }

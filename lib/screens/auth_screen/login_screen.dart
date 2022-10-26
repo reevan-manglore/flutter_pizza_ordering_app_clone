@@ -2,9 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import "package:provider/provider.dart";
 import 'package:lottie/lottie.dart';
+
+import '../../providers/user_account_provider.dart';
+
 import '../../screens/home_page/home_page.dart';
+import '../../screens/auth_screen/user_registration_screen.dart';
 import './authentication_form.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,6 +22,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
+    final userAccount = Provider.of<UserAccountProvider>(
+      context,
+    );
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
@@ -78,10 +85,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                 );
                                 await Future.delayed(
                                     const Duration(seconds: 2));
+                                final hasUserRegisterd = await userAccount
+                                    .fetchAndSetUser(); //try to fetch user details
+                                if (hasUserRegisterd) {
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                    HomePage.routeName,
+                                    (_) => false,
+                                  ); //remove all previous routes
+                                  return;
+                                }
                                 Navigator.of(context).pushNamedAndRemoveUntil(
-                                  HomePage.routeName,
+                                  UserRegistrationScreen.routeName,
                                   (_) => false,
-                                ); //remove all previous routes
+                                );
                               } on FirebaseAuthException catch (e) {
                                 ScaffoldMessenger.of(context)
                                     .removeCurrentSnackBar();

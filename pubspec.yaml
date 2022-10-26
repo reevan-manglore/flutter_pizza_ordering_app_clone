@@ -46,6 +46,8 @@ dependencies:
   firebase_auth: ^3.11.2
   connectivity_plus: ^2.3.7
   tuple: ^2.0.1
+  geoflutterfire: ^3.0.3
+  geolocator: ^9.0.2
 
 dev_dependencies:
   flutter_test:

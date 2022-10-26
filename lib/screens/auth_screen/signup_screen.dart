@@ -3,9 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:provider/provider.dart';
 
-import '../home_page/home_page.dart';
+import './user_registration_screen.dart';
 
 import './authentication_form.dart';
 
@@ -82,7 +81,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     const Duration(seconds: 5));
                                 if (!mounted) return;
                                 Navigator.of(context).pushNamedAndRemoveUntil(
-                                    HomePage.routeName,
+                                    UserRegistrationScreen.routeName,
                                     (_) => false); //remove all previous routes
                               } on FirebaseAuthException catch (e) {
                                 ScaffoldMessenger.of(context)

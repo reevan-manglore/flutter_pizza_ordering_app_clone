@@ -178,6 +178,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             _buildSnackBar("Please choose your location"),
                           );
+                          return;
                         }
                         _formKey.currentState!.save();
                         setState(() {

@@ -9,6 +9,7 @@ class UserAccountProvider with ChangeNotifier {
   String _phoneNumber = "";
 
   List<UserAddress> _savedAddresses = [];
+  UserAddress? _addressToDeliver;
   bool _isRegisterd = false;
   bool _isLoading = false;
 
@@ -61,6 +62,10 @@ class UserAccountProvider with ChangeNotifier {
     return true;
   }
 
+  set addressToDeliver(UserAddress address) {
+    _addressToDeliver = address;
+  }
+
   Future<void> createNewUser({
     required String name,
     required String phoneNumber,
@@ -107,6 +112,43 @@ class UserAccountProvider with ChangeNotifier {
     ];
     _isRegisterd = true;
     notifyListeners();
+  }
+
+  Future<void> addNewAddress({
+    required String address,
+    required double latitude,
+    required double longitude,
+    required String tag,
+  }) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final instance = FirebaseFirestore.instance.collection("users");
+    await instance.doc(user.uid).update({
+      "savedAddresses": FieldValue.arrayUnion(
+        [
+          {
+            "placeName": address,
+            "latitude": latitude,
+            "longitude": longitude,
+            "geoHash": UserAddress.getGeoHashFromLatLang(
+              latitude: latitude,
+              longitude: longitude,
+            ),
+            "tag": tag
+          }
+        ],
+      )
+    });
+    _savedAddresses.add(
+      UserAddress(
+        address: address,
+        latitude: latitude,
+        longitude: longitude,
+        tag: tag,
+      ),
+    );
+    notifyListeners();
+    return;
   }
 
   String get name => _name;

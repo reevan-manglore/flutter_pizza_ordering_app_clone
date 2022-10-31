@@ -1,8 +1,11 @@
 import "package:flutter/material.dart";
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 
 import '../maps_display_screen/maps_display_screen.dart';
+
+import '../../providers/user_account_provider.dart';
 
 class AddNewAdressScreen extends StatefulWidget {
   static const routeName = "/add-new-address";
@@ -23,6 +26,8 @@ class _AddNewAdressScreenState extends State<AddNewAdressScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final _userAccountProvider = Provider.of<UserAccountProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add New Address"),
@@ -50,7 +55,7 @@ class _AddNewAdressScreenState extends State<AddNewAdressScreen> {
                 validator: (value) => (value == null || value.length < 3)
                     ? "Please provide valid street name"
                     : null,
-                // onSaved: (val) => _userDetails["address"] = val!,
+                onSaved: (val) => _userDetails["address"] = val!,
               ),
               const SizedBox(
                 height: 25,
@@ -112,7 +117,7 @@ class _AddNewAdressScreenState extends State<AddNewAdressScreen> {
                           (value == null || value.length < 3))
                       ? "Please provide  tag name of atleast 3 characters"
                       : null,
-                  // onSaved: (val) => _userDetails["address"] = val!,
+                  onSaved: (val) => _userDetails["tag"] = val!,
                 ),
               const Spacer(),
               ElevatedButton.icon(
@@ -125,22 +130,54 @@ class _AddNewAdressScreenState extends State<AddNewAdressScreen> {
                             _longitude == null) {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(
-                            _buildSnackBar("Please choose your location"),
+                            _buildSnackBar("Please choose your location",
+                                isSuccessMessage: false),
                           );
                           return;
                         }
                         if (_selectedTag == null) {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(
-                            _buildSnackBar("Please choose your tag"),
+                            _buildSnackBar("Please choose your tag",
+                                isSuccessMessage: false),
                           );
                           return;
                         }
 
                         _formKey.currentState!.save();
-                        // setState(() {
-                        //   _isLoading = true;
-                        // });
+                        setState(() {
+                          _isLoading = true;
+                        });
+                        try {
+                          _userAccountProvider.addNewAddress(
+                            address: _userDetails["address"]!,
+                            latitude: _latitude!,
+                            longitude: _longitude!,
+                            tag: (_selectedTag == Tags.other)
+                                ? _userDetails["tag"]!
+                                : _selectedTag!.tagName,
+                          );
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            _buildSnackBar("New adress sucessfully added",
+                                isSuccessMessage: true),
+                          );
+
+                          setState(() {
+                            _isLoading = true;
+                          });
+
+                          Navigator.of(context).pop();
+                        } catch (e) {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            _buildSnackBar(
+                                "Some error occured while adding new address",
+                                isSuccessMessage: false),
+                          );
+                        }
                       },
                 icon: Icon(
                   Icons.add,
@@ -233,9 +270,13 @@ class _AddNewAdressScreenState extends State<AddNewAdressScreen> {
       return _buildAlertDialog(title: "Please confirm location");
     }
     setState(() {
-      _locationName = poppedData["locationName"];
-      _latitude = poppedData["latitude"];
-      _longitude = poppedData["longitude"];
+      // _locationName = poppedData["locationName"];
+      // _latitude = poppedData["latitude"];
+      // _longitude = poppedData["longitude"];
+      /*TODO to refactor this part of code   */
+      _locationName = "Neighbourhood Of Nowhere Street";
+      _latitude = 12.8709179;
+      _longitude = 74.8267859;
     });
   }
 
@@ -261,13 +302,13 @@ class _AddNewAdressScreenState extends State<AddNewAdressScreen> {
     );
   }
 
-  SnackBar _buildSnackBar(String message) {
+  SnackBar _buildSnackBar(String message, {required bool isSuccessMessage}) {
     return SnackBar(
       content: Text(
         message,
         style: const TextStyle(color: Colors.white),
       ),
-      backgroundColor: Colors.red,
+      backgroundColor: isSuccessMessage ? Colors.green : Colors.red,
     );
   }
 

@@ -18,6 +18,8 @@ import './bestseller_pizza_card.dart';
 import './bestseller_sides_card.dart';
 
 import '../cart_screen/cart_screen.dart';
+import '../user_account_info_screen/user_account_info_screen.dart';
+
 import '../item_display_screen/items_by_offer_display_screen.dart';
 
 import '../../helpers/error_section.dart';
@@ -30,11 +32,25 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool isInitallyLoaded = false; //to check mounting of page when app starts
   @override
   void initState() {
     Provider.of<MenuProvider>(context, listen: false).fetchAndSetProducts();
     Provider.of<OfferProvider>(context, listen: false).fetchAndSetOffers();
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (!isInitallyLoaded) {
+      //TODO TO IMPLEMENNT LOGIC DURING INITALLY LOADING OF PAGE
+      //*
+      //*
+      //*
+
+      isInitallyLoaded = true;
+    }
+    super.didChangeDependencies();
   }
 
   @override
@@ -102,7 +118,9 @@ class _HomePageState extends State<HomePage> {
           ),
           IconButton(
             tooltip: "Manage Your Account",
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushNamed(UserAccountInfoScreen.routeName);
+            },
             icon: const Icon(
               Icons.account_circle,
               size: 32,

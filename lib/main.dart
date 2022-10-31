@@ -22,6 +22,8 @@ import 'screens/item_display_screen/items_by_category_display_screen.dart';
 import 'screens/cart_screen/cart_screen.dart';
 import 'screens/item_display_screen/items_by_offer_display_screen.dart';
 import 'screens/offer_picking_screen/offer_picking_screen.dart';
+import 'screens/user_account_info_screen/user_account_info_screen.dart';
+import 'screens/user_account_info_screen/add_new_address_screen.dart';
 
 import 'helpers/loading_screen.dart';
 
@@ -89,12 +91,17 @@ class MyApp extends StatelessWidget {
               ),
               home: _pageToRender,
               routes: {
+                //since we are definig home route so flutter will give error if one declare "/" route
                 // '/': (context) => const HomePage(),
                 WelcomePage.routeName: (context) => const WelcomePage(),
                 LoginScreen.routeName: (context) => const LoginScreen(),
                 SignupScreen.routeName: (context) => const SignupScreen(),
                 UserRegistrationScreen.routeName: (context) =>
                     const UserRegistrationScreen(),
+                UserAccountInfoScreen.routeName: (context) =>
+                    const UserAccountInfoScreen(),
+                AddNewAdressScreen.routeName: (context) =>
+                    const AddNewAdressScreen(),
                 CustomizationScreen.routeName: (context) =>
                     const CustomizationScreen(),
                 ItemsByCategoryDisplayScreen.routeName: (context) =>
@@ -105,8 +112,6 @@ class MyApp extends StatelessWidget {
                 OfferPickingScreen.routeName: (context) =>
                     const OfferPickingScreen(),
               },
-              // initialRoute: '/',
-              // initialRoute: AuthenticationPage.routeName,
             );
           }),
     );

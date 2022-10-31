@@ -111,6 +111,7 @@ class UserAccountProvider with ChangeNotifier {
 
   String get name => _name;
   String get phoneNumber => _phoneNumber;
+  List<UserAddress> get savedAddresses => _savedAddresses;
   bool get isRegisterd => _isRegisterd;
   bool get isLoading => _isLoading;
 }

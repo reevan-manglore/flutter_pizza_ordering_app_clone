@@ -13,6 +13,8 @@ import './offer_item_display_card.dart';
 import './pizza_item_display_card.dart';
 import './sides_item_display_card.dart';
 
+import '../../helpers/not_found.dart';
+
 class ItemsByOfferDisplayScreen extends StatefulWidget {
   const ItemsByOfferDisplayScreen({Key? key}) : super(key: key);
   static const routeName = "/items_by_offer_screen";
@@ -130,27 +132,32 @@ class _ItemsByOfferDisplayScreenState extends State<ItemsByOfferDisplayScreen> {
         padding: const EdgeInsets.symmetric(
           horizontal: 8.0,
         ),
-        child: ListView.builder(
-            itemCount: _pizzas.length + _sides.length + 1,
-            itemBuilder: (context, idx) {
-              if (idx == 0) {
-                return _buildHeroTitle();
-              } else if (idx - 1 < _pizzas.length) {
-                return ChangeNotifierProvider.value(
-                  value: _pizzas[idx - 1],
-                  builder: (context, _) {
-                    return PizzaItemDisplayCard();
-                  },
-                );
-              } else {
-                return ChangeNotifierProvider.value(
-                  value: _sides[idx - 1 - _pizzas.length],
-                  builder: (context, _) {
-                    return const SidesItemDisplayCard();
-                  },
-                );
-              }
-            }),
+        child: (_pizzas.isEmpty && _sides.isEmpty)
+            ? const NotFound(
+                notFoundMessage:
+                    "Sorry currently no item found for this category",
+              )
+            : ListView.builder(
+                itemCount: _pizzas.length + _sides.length + 1,
+                itemBuilder: (context, idx) {
+                  if (idx == 0) {
+                    return _buildHeroTitle();
+                  } else if (idx - 1 < _pizzas.length) {
+                    return ChangeNotifierProvider.value(
+                      value: _pizzas[idx - 1],
+                      builder: (context, _) {
+                        return PizzaItemDisplayCard();
+                      },
+                    );
+                  } else {
+                    return ChangeNotifierProvider.value(
+                      value: _sides[idx - 1 - _pizzas.length],
+                      builder: (context, _) {
+                        return const SidesItemDisplayCard();
+                      },
+                    );
+                  }
+                }),
       ),
     );
   }

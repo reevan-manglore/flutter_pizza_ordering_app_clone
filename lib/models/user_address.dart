@@ -43,7 +43,7 @@ class UserAddress {
   double get latitude => _latitude;
   double get longitude => _longitude;
 
-  String get hash {
+  String get geoHash {
     return GeoFirePoint(_latitude, _longitude).hash;
   }
 

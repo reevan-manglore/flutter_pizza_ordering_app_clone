@@ -11,9 +11,31 @@ import './pizza_item_provider.dart';
 class MenuProvider extends ChangeNotifier {
   List<PizzaItemProvider> _pizzas = [];
   List<SidesItemProvider> _sides = [];
+  String? _userLocation;
   bool _isLoading = false;
   bool _hasError = true;
   String? _errMsg;
+  DateTime? _timeDuringLastFetch; //inorder to avoid race conditons if any
+
+  void setUserLocation(String location) {
+    //if location passed as parameter is same as previous userLocation then do nothing just return
+    if (location == _userLocation) return;
+    _userLocation = location;
+    /*when location changes then we will start to refetch the menu items
+    based on user curent  location here is reseted _isLoading to false becuase
+    i written condition in fetchAndSet products to just return if alerdy isLoading
+    is true in order to avoid double fetching problem  which was happening during 
+    app starts
+    */
+
+    _isLoading = false;
+    fetchAndSetProducts();
+    log("set user location called in menu provider");
+  }
+
+  String? get userLocation {
+    return _userLocation;
+  }
 
   List<PizzaItemProvider> get pizzas {
     return _pizzas;
@@ -34,13 +56,19 @@ class MenuProvider extends ChangeNotifier {
   String? get errMsg => _errMsg;
 
   Future<void> fetchAndSetProducts() async {
-    if (isLoading) return;
+    log("in fetch and set products userLocation is $_userLocation ");
+    if (_userLocation == null) return;
+    if (_isLoading) return;
     try {
       final List<PizzaItemProvider> tempPizzaArr = [];
       final List<SidesItemProvider> tempSidesArr = [];
       _isLoading = true;
       _hasError = false; //if in case _hasError is true
       _errMsg = null;
+
+      final _timeDuringThisFetch = DateTime.now(); //to avoid race conditons
+      _timeDuringLastFetch = _timeDuringThisFetch; // to avoid race conditons
+
       final conectivityReult = await Connectivity().checkConnectivity();
       if (conectivityReult == ConnectivityResult.none) {
         throw const SocketException("Sorry internet connection not found");
@@ -53,10 +81,15 @@ class MenuProvider extends ChangeNotifier {
         here,so Flutter rejects the request and throws an exception.
         so inorder to prevent this exception we call addPostFrameCallback() is called
         inorder to ensure that closure. notifyListeners() will be executed after the build is complete.
+        //correction here this just worked as i more developed the application i.e while added more features
+        //i think this was caused dued to double fetching problem which i solved
       */
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        notifyListeners();
-      });
+      // WidgetsBinding.instance.addPostFrameCallback((_) {
+      //   log("listener called");
+      //   notifyListeners();
+      // });
+      notifyListeners();
+
       final uid = FirebaseAuth.instance.currentUser?.uid;
       final queySnapshot =
           await FirebaseFirestore.instance.collection("menuItems").get();
@@ -88,6 +121,20 @@ class MenuProvider extends ChangeNotifier {
               isFavourite: isItemUserFavourite));
         }
       }
+      /*if one more fetchAndSet  functions is invocated
+        then timeOfThisFetch and _timeDuringLastFetch will
+        not be same so by using this techniqe we will come
+        to know if fetchAndSet is invocated multipple times.
+        if its invocated then we will set results of 
+        most recent function call to _pizzas and for _sides
+      */
+      if (_timeDuringThisFetch != _timeDuringLastFetch) return;
+      //TODO to delete this debug piece of code
+      // if (userLocation == "tdm0ztt50") {
+      //   tempPizzaArr.removeWhere((element) =>
+      //       element.pizzaName == "Veggie Extravaganza" ||
+      //       element.pizzaName == "Veggie Paradise");
+      // }
       _pizzas = tempPizzaArr;
       _sides = tempSidesArr;
       _pizzas.add(_samplePizza);

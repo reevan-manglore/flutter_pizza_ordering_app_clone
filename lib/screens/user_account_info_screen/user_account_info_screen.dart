@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
-
 import "package:provider/provider.dart";
+import "package:firebase_auth/firebase_auth.dart";
+import "dart:developer" show log;
+
 import "../../providers/user_account_provider.dart";
 
 import './add_new_address_screen.dart';
+import "../auth_screen/welcome_screen.dart";
+
+import '../../helpers/tag_symbol.dart';
 
 class UserAccountInfoScreen extends StatelessWidget {
   static const routeName = "/user-account-info-screen";
@@ -40,8 +45,7 @@ class UserAccountInfoScreen extends StatelessWidget {
                 child: ListView.builder(
                   shrinkWrap: true,
                   itemBuilder: (context, idx) => ListTile(
-                    leading:
-                        _determineTagSymbol(userInfo.savedAddresses[idx].tag),
+                    leading: TagSymbol(tag: userInfo.savedAddresses[idx].tag),
                     title: Text(userInfo.savedAddresses[idx].tag),
                     subtitle: Text(userInfo.savedAddresses[idx].address),
                     isThreeLine: true,
@@ -70,7 +74,49 @@ class UserAccountInfoScreen extends StatelessWidget {
                 style: ListTileStyle.list,
                 leading: const Icon(Icons.logout_outlined),
                 shape: const OutlineInputBorder(),
-                onTap: () {},
+                onTap: () async {
+                  log("print logged out");
+                  try {
+                    final shouldLogout = await showDialog<bool>(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: const Text("Are you sure to Logout"),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: const Text(
+                              "Yes",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: const Text(
+                              "No",
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                    if (shouldLogout == null || !shouldLogout) return;
+                    await FirebaseAuth.instance.signOut();
+
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        WelcomePage.routeName, (route) => false);
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text(
+                          "Some error occured while logging you out",
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                        backgroundColor: Colors.red.shade300,
+                      ),
+                    );
+                  }
+                },
                 title: const Text("Logout"),
               ),
             ],
@@ -119,21 +165,5 @@ class UserAccountInfoScreen extends StatelessWidget {
         color: Colors.grey.shade800,
       ),
     );
-  }
-
-  Widget _determineTagSymbol(String text) {
-    if (text == "Home") {
-      return const Icon(Icons.home);
-    }
-    if (text == "Work") {
-      return const Icon(Icons.work);
-    }
-    if (text == "Family") {
-      return const Icon(Icons.family_restroom);
-    }
-    if (text == "Friends") {
-      return const Icon(Icons.emoji_people);
-    }
-    return const Icon(Icons.location_history_rounded);
   }
 }

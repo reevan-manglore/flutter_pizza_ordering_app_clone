@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:pizza_app/models/offer_cupon.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +18,7 @@ import 'sub_offer_card.dart';
 import './varities.dart';
 import './bestseller_pizza_card.dart';
 import './bestseller_sides_card.dart';
+import './address_picker.dart';
 
 import '../cart_screen/cart_screen.dart';
 import '../user_account_info_screen/user_account_info_screen.dart';
@@ -23,6 +26,7 @@ import '../user_account_info_screen/user_account_info_screen.dart';
 import '../item_display_screen/items_by_offer_display_screen.dart';
 
 import '../../helpers/error_section.dart';
+import '../../helpers/not_found.dart';
 
 class HomePage extends StatefulWidget {
   static const String routeName = "/";
@@ -32,25 +36,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool isInitallyLoaded = false; //to check mounting of page when app starts
   @override
   void initState() {
     Provider.of<MenuProvider>(context, listen: false).fetchAndSetProducts();
     Provider.of<OfferProvider>(context, listen: false).fetchAndSetOffers();
     super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    if (!isInitallyLoaded) {
-      //TODO TO IMPLEMENNT LOGIC DURING INITALLY LOADING OF PAGE
-      //*
-      //*
-      //*
-
-      isInitallyLoaded = true;
-    }
-    super.didChangeDependencies();
   }
 
   @override
@@ -60,6 +50,7 @@ class _HomePageState extends State<HomePage> {
     final _offerData = Provider.of<OfferProvider>(context);
     final veganPreferance = Provider.of<VeganPreferanceProvider>(context);
     List bestSellers = [];
+    log("menu data is loading : ${_menuData.isLoading}");
     if (!_menuData.isLoading) {
       bestSellers = [
         ..._menuData.findPizzas(
@@ -90,10 +81,11 @@ class _HomePageState extends State<HomePage> {
         },
       );
     }
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: _LocationPickerButton(),
+        title: const AddressPicker(),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         actions: [
           IconButton(
@@ -128,170 +120,173 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
-      body: _menuData.isLoading || _offerData.isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : SingleChildScrollView(
-              child: Container(
-                width: double.infinity,
-                margin: const EdgeInsets.all(8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (_offerData.heroOffer != null)
-                      HeroOfferCard(
-                        title: _offerData.heroOffer!.title,
-                        description: _offerData.heroOffer!.description,
-                        type: _offerData.heroOffer!.type,
-                        offerCode: _offerData.heroOffer!.offerCode,
-                        whenTapped: () {
-                          _cartData.copyOffer(_offerData.heroOffer!);
-                          if (_offerData.heroOffer!.type ==
-                              OfferType.offerOnCart) {
-                            CustomToast(context).hideCurrentToast();
-                            CustomToast(context).showToast(
-                                "Offer Code \"${_offerData.heroOffer!.offerCode}\" Copied");
-                          } else {
-                            Navigator.of(context).pushNamed(
-                              ItemsByOfferDisplayScreen.routeName,
-                              arguments: _offerData.heroOffer!.id,
-                            );
-                          }
-                        },
-                      ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 10.0,
-                        bottom: 8.0,
-                        left:
-                            10.0, //bascially i used this because in SubOffer i have given some extra margin
-                      ),
-                      child: _buildHeader("More Offers"),
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 165,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: _offerData.subOffers.map((val) {
-                          return SubOfferCard(
-                            title: val.title,
-                            description: val.description,
-                            offerCode: val.offerCode,
-                            type: val.type,
+      body: (_menuData.isLoading || _offerData.isLoading)
+          ? const CircularProgressIndicator()
+          : (_menuData.pizzas.isEmpty && _menuData.sides.isEmpty)
+              ? const NotFound(
+                  notFoundMessage: "Soory no franchise found in your region",
+                )
+              : SingleChildScrollView(
+                  child: Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.all(8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (_offerData.heroOffer != null)
+                          HeroOfferCard(
+                            title: _offerData.heroOffer!.title,
+                            description: _offerData.heroOffer!.description,
+                            type: _offerData.heroOffer!.type,
+                            offerCode: _offerData.heroOffer!.offerCode,
                             whenTapped: () {
-                              _cartData.copyOffer(val);
-                              if (val.type == OfferType.offerOnCart) {
+                              _cartData.copyOffer(_offerData.heroOffer!);
+                              if (_offerData.heroOffer!.type ==
+                                  OfferType.offerOnCart) {
                                 CustomToast(context).hideCurrentToast();
                                 CustomToast(context).showToast(
-                                    "Offer Code \"${val.offerCode}\" Copied");
+                                    "Offer Code \"${_offerData.heroOffer!.offerCode}\" Copied");
                               } else {
                                 Navigator.of(context).pushNamed(
                                   ItemsByOfferDisplayScreen.routeName,
-                                  arguments: val.id,
+                                  arguments: _offerData.heroOffer!.id,
                                 );
                               }
                             },
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 10.0,
-                        bottom: 8.0,
-                        left:
-                            10.0, //bascially i used this because in SubOffer i have given  varites widget some extra margin
-                      ),
-                      child: _buildHeader("Explore Our Varities"),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Theme.of(context).colorScheme.surfaceVariant,
-                      ),
-                      width: double.infinity,
-                      height: 330,
-                      child: const Varites(),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 10.0,
-                        bottom: 8.0,
-                        left:
-                            10.0, //bascially i used this because in SubOffer i have given  varites widget some extra margin
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _buildHeader("Our BestSellers"),
-                          Flexible(
-                            flex: 2,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                InkWell(
-                                  onTap: veganPreferance.toggleVegan,
-                                  child: Row(
-                                    children: [
-                                      Switch(
-                                        value: veganPreferance.isveganOnly,
-                                        onChanged: (_) =>
-                                            veganPreferance.toggleVegan(),
-                                        activeColor: Colors.green,
-                                      ),
-                                      Text(
-                                        "Veg Only",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .subtitle2!
-                                            .copyWith(
-                                              color: veganPreferance.isveganOnly
-                                                  ? Colors.green
-                                                  : null,
-                                            ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
                           ),
-                        ],
-                      ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 10.0,
+                            bottom: 8.0,
+                            left:
+                                10.0, //bascially i used this because in SubOffer i have given some extra margin
+                          ),
+                          child: _buildHeader("More Offers"),
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 165,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: _offerData.subOffers.map((val) {
+                              return SubOfferCard(
+                                title: val.title,
+                                description: val.description,
+                                offerCode: val.offerCode,
+                                type: val.type,
+                                whenTapped: () {
+                                  _cartData.copyOffer(val);
+                                  if (val.type == OfferType.offerOnCart) {
+                                    CustomToast(context).hideCurrentToast();
+                                    CustomToast(context).showToast(
+                                        "Offer Code \"${val.offerCode}\" Copied");
+                                  } else {
+                                    Navigator.of(context).pushNamed(
+                                      ItemsByOfferDisplayScreen.routeName,
+                                      arguments: val.id,
+                                    );
+                                  }
+                                },
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 10.0,
+                            bottom: 8.0,
+                            left:
+                                10.0, //bascially i used this because in SubOffer i have given  varites widget some extra margin
+                          ),
+                          child: _buildHeader("Explore Our Varities"),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Theme.of(context).colorScheme.surfaceVariant,
+                          ),
+                          width: double.infinity,
+                          height: 330,
+                          child: const Varites(),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 10.0,
+                            bottom: 8.0,
+                            left:
+                                10.0, //bascially i used this because in SubOffer i have given  varites widget some extra margin
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _buildHeader("Our BestSellers"),
+                              Flexible(
+                                flex: 2,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    InkWell(
+                                      onTap: veganPreferance.toggleVegan,
+                                      child: Row(
+                                        children: [
+                                          Switch(
+                                            value: veganPreferance.isveganOnly,
+                                            onChanged: (_) =>
+                                                veganPreferance.toggleVegan(),
+                                            activeColor: Colors.green,
+                                          ),
+                                          Text(
+                                            "Veg Only",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .subtitle2!
+                                                .copyWith(
+                                                  color: veganPreferance
+                                                          .isveganOnly
+                                                      ? Colors.green
+                                                      : null,
+                                                ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          width: double.infinity,
+                          constraints: const BoxConstraints(
+                            minHeight: 200,
+                            maxHeight: 400,
+                          ),
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, idx) {
+                              if (bestSellers[idx].runtimeType ==
+                                  PizzaItemProvider) {
+                                return ChangeNotifierProvider<
+                                    PizzaItemProvider>.value(
+                                  value: bestSellers[idx] as PizzaItemProvider,
+                                  child: BestSellerPizzaCard(),
+                                );
+                              } else {
+                                return ChangeNotifierProvider<
+                                    SidesItemProvider>.value(
+                                  value: bestSellers[idx] as SidesItemProvider,
+                                  child: BestSellerSidesCard(),
+                                );
+                              }
+                            },
+                            itemCount: bestSellers.length,
+                          ),
+                        ),
+                      ],
                     ),
-                    Container(
-                      width: double.infinity,
-                      constraints: const BoxConstraints(
-                        minHeight: 200,
-                        maxHeight: 400,
-                      ),
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, idx) {
-                          if (bestSellers[idx].runtimeType ==
-                              PizzaItemProvider) {
-                            return ChangeNotifierProvider<
-                                PizzaItemProvider>.value(
-                              value: bestSellers[idx] as PizzaItemProvider,
-                              child: BestSellerPizzaCard(),
-                            );
-                          } else {
-                            return ChangeNotifierProvider<
-                                SidesItemProvider>.value(
-                              value: bestSellers[idx] as SidesItemProvider,
-                              child: BestSellerSidesCard(),
-                            );
-                          }
-                        },
-                        itemCount: bestSellers.length,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
     );
   }
 
@@ -300,48 +295,6 @@ class _HomePageState extends State<HomePage> {
       title,
       // textAlign: TextAlign.start,
       style: Theme.of(context).textTheme.headline6,
-    );
-  }
-}
-
-class _LocationPickerButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {},
-      child: SizedBox(
-        width: 250,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(
-                  Icons.delivery_dining,
-                  size: 28,
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                const Text("Take Away From"),
-                const SizedBox(
-                  width: 5,
-                ),
-                const Icon(Icons.expand_more),
-              ],
-            ),
-            Container(
-              width: 250,
-              alignment: Alignment.center,
-              child: const Text(
-                "Santosh Nagar munnur post near anganwadi kendra manglore pandithouse",
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.start,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

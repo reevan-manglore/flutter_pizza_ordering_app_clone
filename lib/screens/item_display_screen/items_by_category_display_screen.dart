@@ -12,6 +12,8 @@ import './sides_item_display_card.dart';
 import './pizza_item_display_card.dart';
 import "../cart_screen/cart_screen.dart";
 
+import '../../helpers/not_found.dart';
+
 class ItemsByCategoryDisplayScreen extends StatefulWidget {
   static const String routeName = "/category-screen";
 
@@ -97,47 +99,54 @@ class _ItemsByCategoryDisplayScreenState
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Explore our $argument's",
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-                if (!isPizzaCategory)
-                  InkWell(
-                    onTap: veganPreferance.toggleVegan,
-                    child: Row(
-                      children: [
-                        Switch(
-                          value: veganPreferance.isveganOnly,
-                          onChanged: (_) => veganPreferance.toggleVegan(),
-                          activeColor: Colors.green,
+      body: (_pizzas.isEmpty && _sides.isEmpty)
+          ? const NotFound(
+              notFoundMessage:
+                  "Sorry currently no item found for this category",
+            )
+          : Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Explore our $argument's",
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                      if (!isPizzaCategory)
+                        InkWell(
+                          onTap: veganPreferance.toggleVegan,
+                          child: Row(
+                            children: [
+                              Switch(
+                                value: veganPreferance.isveganOnly,
+                                onChanged: (_) => veganPreferance.toggleVegan(),
+                                activeColor: Colors.green,
+                              ),
+                              Text(
+                                "Veg Only",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle2!
+                                    .copyWith(
+                                      color: veganPreferance.isveganOnly
+                                          ? Colors.green
+                                          : null,
+                                    ),
+                              )
+                            ],
+                          ),
                         ),
-                        Text(
-                          "Veg Only",
-                          style:
-                              Theme.of(context).textTheme.subtitle2!.copyWith(
-                                    color: veganPreferance.isveganOnly
-                                        ? Colors.green
-                                        : null,
-                                  ),
-                        )
-                      ],
-                    ),
+                    ],
                   ),
-              ],
+                  Expanded(
+                    child: _buildListView(),
+                  ),
+                ],
+              ),
             ),
-            Expanded(
-              child: _buildListView(),
-            ),
-          ],
-        ),
-      ),
     );
   }
 

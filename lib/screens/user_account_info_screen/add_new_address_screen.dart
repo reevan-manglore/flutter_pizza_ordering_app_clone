@@ -318,7 +318,7 @@ class _AddNewAdressScreenState extends State<AddNewAdressScreen> {
       barrierDismissible: false,
       builder: (context) => const AlertDialog(
         contentPadding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
-        title: Text("Featching your location"),
+        title: Text("Fetching your location"),
         content: CupertinoActivityIndicator(
           radius: 20,
           color: Colors.blue,

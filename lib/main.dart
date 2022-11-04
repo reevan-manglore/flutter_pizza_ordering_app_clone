@@ -45,8 +45,17 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => UserAccountProvider(),
         ),
-        ChangeNotifierProvider(
+        ChangeNotifierProxyProvider<UserAccountProvider, MenuProvider>(
           create: (context) => MenuProvider(),
+          update: (context, userAccount, previousMenuVal) {
+            if (previousMenuVal == null) {
+              return MenuProvider()
+                ..setUserLocation(userAccount.addressToDeliver.geoHash);
+            } else {
+              return previousMenuVal
+                ..setUserLocation(userAccount.addressToDeliver.geoHash);
+            }
+          },
         ),
         ChangeNotifierProvider(
           create: (context) => ToppingsProvider(),

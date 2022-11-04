@@ -49,6 +49,9 @@ dependencies:
   geoflutterfire: ^3.0.3
   geolocator: ^9.0.2
 
+dependency_overrides:
+  firebase_core_platform_interface: 4.5.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -85,6 +88,7 @@ flutter:
     - lib/assets/images/sample-pizza-image.jpg
     - lib/assets/images/login-page-pizza-avatar.png
     - lib/assets/lotties/signup_animation.json
+    - lib/assets/lotties/not_found.json
    
 
   # An image asset can refer to one or more resolution-specific "variants", see

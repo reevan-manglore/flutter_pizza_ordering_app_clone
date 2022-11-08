@@ -48,6 +48,7 @@ dependencies:
   tuple: ^2.0.1
   geoflutterfire: ^3.0.3
   geolocator: ^9.0.2
+  firebase_messaging: ^12.0.3
 
 dependency_overrides:
   firebase_core_platform_interface: 4.5.1

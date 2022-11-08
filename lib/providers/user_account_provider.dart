@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import '../models/user_address.dart';
 
@@ -54,11 +54,8 @@ class UserAccountProvider with ChangeNotifier {
     _name = docs["name"];
     _phoneNumber = docs["phoneNumber"];
     /*reset any of previously saved adrress if present happens usualy when user
-      logos out in log out screen and then again user logs in
+      logs out in log out screen and then again user logs in
      */
-    // final deviceId = await FirebaseMessaging.instance.getToken();
-    // log("device id is ${deviceId}");
-
     _savedAddresses = [];
     for (var element in docs["savedAddresses"] as List<dynamic>) {
       _savedAddresses.add(UserAddress.fromMap(element));
@@ -145,12 +142,12 @@ class UserAccountProvider with ChangeNotifier {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
     final instance = FirebaseFirestore.instance.collection("users");
-    // final deviceId = await FirebaseMessaging.instance.getToken();
+    final deviceId = await FirebaseMessaging.instance.getToken();
     await instance.doc(user.uid).set({
       "uid": user.uid,
       "name": name,
       "phoneNumber": phoneNumber,
-      // "deviceId": deviceId,
+      "deviceId": deviceId,
       "favourites": [],
       "savedAddresses": [
         {

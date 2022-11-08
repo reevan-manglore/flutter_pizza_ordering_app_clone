@@ -22,11 +22,12 @@ class HeroOfferCard extends StatelessWidget {
       onTap: () => whenTapped(),
       child: Card(
         elevation: 2.0,
+        margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(3),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(3),
           child: Container(
             width: double.infinity,
             clipBehavior: Clip.hardEdge,

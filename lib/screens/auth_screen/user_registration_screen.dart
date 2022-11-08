@@ -30,15 +30,17 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
   Widget build(BuildContext context) {
     final userAccount = Provider.of<UserAccountProvider>(context);
     return Scaffold(
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      resizeToAvoidBottomInset: false,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 25.0, horizontal: 16.0),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(
-                height: 80.0,
+                height: 50.0,
               ),
               RichText(
                 text: const TextSpan(
@@ -166,6 +168,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
               const SizedBox(
                 height: 25,
               ),
+              const Spacer(),
               ElevatedButton(
                 onPressed: _isLoading
                     ? null

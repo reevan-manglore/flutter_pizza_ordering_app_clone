@@ -121,10 +121,12 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: (_menuData.isLoading || _offerData.isLoading)
-          ? const CircularProgressIndicator()
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
           : (_menuData.pizzas.isEmpty && _menuData.sides.isEmpty)
               ? const NotFound(
-                  notFoundMessage: "Soory no franchise found in your region",
+                  notFoundMessage: "Sorry no franchise found in your region",
                 )
               : SingleChildScrollView(
                   child: Container(

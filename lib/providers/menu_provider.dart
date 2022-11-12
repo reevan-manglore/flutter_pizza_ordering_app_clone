@@ -3,7 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import "package:geoflutterfire/geoflutterfire.dart";
 import "package:connectivity_plus/connectivity_plus.dart";
+
+import '../models/restaurant.dart';
 
 import './sides_item_provider.dart';
 import './pizza_item_provider.dart';
@@ -11,16 +14,24 @@ import './pizza_item_provider.dart';
 class MenuProvider extends ChangeNotifier {
   List<PizzaItemProvider> _pizzas = [];
   List<SidesItemProvider> _sides = [];
-  String? _userLocation;
+  String? _userLocationHash;
+  double? _userLatitude;
+  double? _userLongitude;
+
+  Restaurant? resturantAssigned;
+
   bool _isLoading = false;
   bool _hasError = true;
   String? _errMsg;
   DateTime? _timeDuringLastFetch; //inorder to avoid race conditons if any
 
-  void setUserLocation(String location) {
+  void setUserLocation(String location,
+      {required double longitude, required double latitude}) {
     //if location passed as parameter is same as previous userLocation then do nothing just return
-    if (location == _userLocation) return;
-    _userLocation = location;
+    if (location == _userLocationHash) return;
+    _userLocationHash = location;
+    _userLatitude = latitude;
+    _userLongitude = longitude;
     /*when location changes then we will start to refetch the menu items
     based on user curent  location here is reseted _isLoading to false becuase
     i written condition in fetchAndSet products to just return if alerdy isLoading
@@ -34,7 +45,7 @@ class MenuProvider extends ChangeNotifier {
   }
 
   String? get userLocation {
-    return _userLocation;
+    return _userLocationHash;
   }
 
   List<PizzaItemProvider> get pizzas {
@@ -55,9 +66,38 @@ class MenuProvider extends ChangeNotifier {
 
   String? get errMsg => _errMsg;
 
+  Future<DocumentSnapshot<Object?>?> _fetchNearbuyRestaurants() async {
+    GeoFirePoint center = Geoflutterfire()
+        .point(latitude: _userLatitude!, longitude: _userLongitude!);
+
+    var collectionReference =
+        FirebaseFirestore.instance.collection('restaurants');
+
+    double radius = 8; //8km
+    String field = 'location';
+
+    Stream<List<DocumentSnapshot>> stream = Geoflutterfire()
+        .collection(
+          collectionRef: collectionReference,
+        )
+        .within(
+          center: center,
+          radius: radius,
+          field: field,
+          strictMode: true,
+        );
+    log("updated");
+    List<DocumentSnapshot> documents = await stream.first;
+    if (documents.isEmpty) {
+      return null;
+    } else {
+      return documents.first;
+    }
+  }
+
   Future<void> fetchAndSetProducts() async {
-    log("in fetch and set products userLocation is $_userLocation ");
-    if (_userLocation == null) return;
+    log("in fetch and set products userLocation is $_userLocationHash ");
+    if (_userLocationHash == null) return;
     if (_isLoading) return;
     try {
       final List<PizzaItemProvider> tempPizzaArr = [];
@@ -85,19 +125,28 @@ class MenuProvider extends ChangeNotifier {
         //i think this was caused dued to double fetching problem which i solved
       */
       // WidgetsBinding.instance.addPostFrameCallback((_) {
-      //   log("listener called");
       //   notifyListeners();
       // });
       notifyListeners();
+      final resturant = await _fetchNearbuyRestaurants();
+      if (resturant == null) return;
+      resturantAssigned = Restaurant.fromMap(
+          resturantId: resturant.id,
+          data: resturant.data() as Map<String, dynamic>);
+
+      final firestoreMenuInstance =
+          FirebaseFirestore.instance.collection("menuItems");
+      final itemsToFetch = resturantAssigned!.itemsAvailable
+          .map((e) => firestoreMenuInstance.doc(e).get())
+          .toList();
+      final menuItems = await Future.wait(itemsToFetch);
 
       final uid = FirebaseAuth.instance.currentUser?.uid;
-      final queySnapshot =
-          await FirebaseFirestore.instance.collection("menuItems").get();
       final userSnapshot = await FirebaseFirestore.instance
           .collection("users")
           .where("uid", isEqualTo: uid)
           .get();
-      final menuItems = queySnapshot.docs;
+
       late List<dynamic>? userFavourites;
       //if in case faviourites field is not present than when referncing
       //faviourites field will throw array so i enclosed in try catch
@@ -113,11 +162,13 @@ class MenuProvider extends ChangeNotifier {
             ? false
             : userFavourites.contains(element.id);
         log("${element.id} is faviourite $isItemUserFavourite");
-        if (element.data()["itemType"] == "pizza") {
-          tempPizzaArr.add(PizzaItemProvider.fromMap(element.id, element.data(),
+        if (element.data()?["itemType"] == "pizza") {
+          tempPizzaArr.add(PizzaItemProvider.fromMap(
+              element.id, element.data()!,
               isFavourite: isItemUserFavourite));
         } else {
-          tempSidesArr.add(SidesItemProvider.fromMap(element.id, element.data(),
+          tempSidesArr.add(SidesItemProvider.fromMap(
+              element.id, element.data()!,
               isFavourite: isItemUserFavourite));
         }
       }

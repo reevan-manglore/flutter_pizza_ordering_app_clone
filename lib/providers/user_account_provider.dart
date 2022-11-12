@@ -5,6 +5,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+import '../../models/restaurant.dart';
+
+import "package:geoflutterfire/geoflutterfire.dart";
+
 import '../models/user_address.dart';
 
 class UserAccountProvider with ChangeNotifier {
@@ -18,6 +22,51 @@ class UserAccountProvider with ChangeNotifier {
 
   UserAccountProvider() {
     fetchAndSetUser();
+  }
+
+  void addNewResturant({
+    required double latitude,
+    required double longitude,
+    required String address,
+  }) {
+    final point =
+        Geoflutterfire().point(latitude: latitude, longitude: longitude).data;
+    final resturnatRef = FirebaseFirestore.instance.collection("restaurants");
+    resturnatRef.add({"resturantAddress": address, "location": point});
+  }
+
+  void searchResturants(
+      {required double latitude,
+      required double longitude,
+      required double radius}) async {
+    log("called");
+    GeoFirePoint center =
+        Geoflutterfire().point(latitude: latitude, longitude: longitude);
+
+    var collectionReference =
+        FirebaseFirestore.instance.collection('restaurants');
+
+    // double radius = 50;
+    String field = 'location';
+
+    Stream<List<DocumentSnapshot>> stream = Geoflutterfire()
+        .collection(
+          collectionRef: collectionReference,
+        )
+        .within(
+          center: center,
+          radius: radius,
+          field: field,
+        );
+    log("updated");
+    List<DocumentSnapshot> documents = await stream.first;
+    if (documents.isEmpty) return;
+    print(Restaurant.fromMap(
+            resturantId: documents.first.id,
+            data: documents.first.data() as Map<String, dynamic>)
+        .resturantAddress);
+
+    print("hello world");
   }
 
   //try to fetch user details if user is registerd then this returns true or else false
@@ -91,6 +140,16 @@ class UserAccountProvider with ChangeNotifier {
         SetOptions(merge: true),
       );
     }
+    //to refresh token in server whenver users fcm token gets updated
+    FirebaseMessaging.instance.onTokenRefresh.listen((token) async {
+      try {
+        userDoc.update({"fcmToken": token});
+      } catch (e) {
+        log("error occured while updating fcmToken");
+      }
+    }).onError((e) {
+      log("error occured in onTokenRefresh stream");
+    });
 
     _isLoading = false;
     _isRegisterd = true;
@@ -142,12 +201,12 @@ class UserAccountProvider with ChangeNotifier {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
     final instance = FirebaseFirestore.instance.collection("users");
-    final deviceId = await FirebaseMessaging.instance.getToken();
+    final fcmToken = await FirebaseMessaging.instance.getToken();
     await instance.doc(user.uid).set({
       "uid": user.uid,
       "name": name,
       "phoneNumber": phoneNumber,
-      "deviceId": deviceId,
+      "fcmToken": fcmToken,
       "favourites": [],
       "savedAddresses": [
         {

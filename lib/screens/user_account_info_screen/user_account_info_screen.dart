@@ -1,7 +1,7 @@
+import "dart:developer" show log;
 import 'package:flutter/material.dart';
 import "package:provider/provider.dart";
 import "package:firebase_auth/firebase_auth.dart";
-import "dart:developer" show log;
 
 import "../../providers/user_account_provider.dart";
 
@@ -18,10 +18,18 @@ class UserAccountInfoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userInfo = Provider.of<UserAccountProvider>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("My Account"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              userInfo.searchResturants(
+                  latitude: 12.814573, longitude: 74.879871, radius: 8);
+            },
+            icon: const Icon(Icons.search),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(

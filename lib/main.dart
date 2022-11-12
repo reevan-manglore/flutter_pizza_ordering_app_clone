@@ -50,10 +50,18 @@ class MyApp extends StatelessWidget {
           update: (context, userAccount, previousMenuVal) {
             if (previousMenuVal == null) {
               return MenuProvider()
-                ..setUserLocation(userAccount.addressToDeliver.geoHash);
+                ..setUserLocation(
+                  userAccount.addressToDeliver.geoHash,
+                  latitude: userAccount.addressToDeliver.latitude,
+                  longitude: userAccount.addressToDeliver.longitude,
+                );
             } else {
               return previousMenuVal
-                ..setUserLocation(userAccount.addressToDeliver.geoHash);
+                ..setUserLocation(
+                  userAccount.addressToDeliver.geoHash,
+                  latitude: userAccount.addressToDeliver.latitude,
+                  longitude: userAccount.addressToDeliver.longitude,
+                );
             }
           },
         ),

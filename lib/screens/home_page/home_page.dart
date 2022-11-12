@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:pizza_app/models/offer_cupon.dart';
 import 'package:provider/provider.dart';
 import 'package:badges/badges.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+import "package:geoflutterfire/geoflutterfire.dart";
 
 import '../../providers/menu_provider.dart';
 import '../../providers/pizza_item_provider.dart';
@@ -38,6 +41,37 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
+    FirebaseMessaging.onMessage.listen((msg) {
+      log("notiication recived");
+      showOnNotificationBanner();
+    });
+    //TODO to delete this unsused commented code
+    // FirebaseMessaging.onBackgroundMessage((msg) async {
+    //   /*to show notification when app is terminated state
+    //     if this function  not registerd somehow flutter doesnt show notification
+    //     when app is in terminated  state
+    //   */
+    // });
+    FirebaseMessaging.onMessageOpenedApp.listen((msg) {
+      log("notiication recived when app is in background mode");
+      log("${msg.data.length}");
+      msg.data.forEach(
+        (key, value) => print("$key : $value"),
+      );
+      showOnNotificationBanner();
+    });
+    FirebaseMessaging.instance.getInitialMessage().then((msg) {
+      /*
+         this function will trigger when user press  on order accepted noticiation
+         whilst the app is terminated here null check is used becuuse this code will
+         run on every app startup so msg!=null means user started app.
+         but not through pressing notifcation
+      */
+      if (msg != null) {
+        log("notiication recived");
+        showOnNotificationBanner();
+      }
+    });
     Provider.of<MenuProvider>(context, listen: false).fetchAndSetProducts();
     Provider.of<OfferProvider>(context, listen: false).fetchAndSetOffers();
     super.initState();
@@ -91,6 +125,9 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             tooltip: "Your Cart",
             onPressed: () {
+              print(
+                  "${Geoflutterfire().point(latitude: 12.812084, longitude: 74.881553).data}");
+
               Navigator.of(context).pushNamed(CartScreen.routeName);
             },
             icon: Badge(
@@ -264,26 +301,36 @@ class _HomePageState extends State<HomePage> {
                             minHeight: 200,
                             maxHeight: 400,
                           ),
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, idx) {
-                              if (bestSellers[idx].runtimeType ==
-                                  PizzaItemProvider) {
-                                return ChangeNotifierProvider<
-                                    PizzaItemProvider>.value(
-                                  value: bestSellers[idx] as PizzaItemProvider,
-                                  child: BestSellerPizzaCard(),
-                                );
-                              } else {
-                                return ChangeNotifierProvider<
-                                    SidesItemProvider>.value(
-                                  value: bestSellers[idx] as SidesItemProvider,
-                                  child: BestSellerSidesCard(),
-                                );
-                              }
-                            },
-                            itemCount: bestSellers.length,
-                          ),
+                          child: (bestSellers.isEmpty)
+                              ? Center(
+                                  child: Text(
+                                    "No Bestseller Exists",
+                                    style:
+                                        Theme.of(context).textTheme.headline3,
+                                  ),
+                                )
+                              : ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, idx) {
+                                    if (bestSellers[idx].runtimeType ==
+                                        PizzaItemProvider) {
+                                      return ChangeNotifierProvider<
+                                          PizzaItemProvider>.value(
+                                        value: bestSellers[idx]
+                                            as PizzaItemProvider,
+                                        child: BestSellerPizzaCard(),
+                                      );
+                                    } else {
+                                      return ChangeNotifierProvider<
+                                          SidesItemProvider>.value(
+                                        value: bestSellers[idx]
+                                            as SidesItemProvider,
+                                        child: BestSellerSidesCard(),
+                                      );
+                                    }
+                                  },
+                                  itemCount: bestSellers.length,
+                                ),
                         ),
                       ],
                     ),
@@ -297,6 +344,55 @@ class _HomePageState extends State<HomePage> {
       title,
       // textAlign: TextAlign.start,
       style: Theme.of(context).textTheme.headline6,
+    );
+  }
+
+  void showOnNotificationBanner() {
+    ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+    ScaffoldMessenger.of(context).showMaterialBanner(
+      MaterialBanner(
+        content: const Text("You order has been placed!"),
+        contentTextStyle: const TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w500,
+          color: Colors.black,
+        ),
+        backgroundColor: Colors.yellow.shade300,
+        actions: [
+          TextButton(
+            onPressed: () {
+              ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+            },
+            child: const Text(
+              "Hide this banner",
+              style: TextStyle(
+                color: Colors.redAccent,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              String? currentRoute;
+              Navigator.of(context).popUntil((route) {
+                //hack to get what is current route in top of stack
+                currentRoute = route.settings.name;
+                /*here return false pops all previous pushed routes so one should return true 
+                inorder not to pop routes*/
+                return true;
+              });
+              if (currentRoute != UserAccountInfoScreen.routeName) {
+                Navigator.of(context)
+                    .pushNamed(UserAccountInfoScreen.routeName);
+              }
+              ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+            },
+            child: const Text(
+              "Show my order",
+              style: TextStyle(color: Colors.blue),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

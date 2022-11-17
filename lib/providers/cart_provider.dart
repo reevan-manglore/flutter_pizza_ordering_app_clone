@@ -2,9 +2,13 @@ import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import '../models/pizza_cart_item.dart';
 import '../models/sides_cart_item.dart';
 import '../models/offer_cupon.dart';
+import '../models/restaurant.dart';
 import '../providers/pizza_item_provider.dart';
 import '../providers/sides_item_provider.dart';
 
@@ -212,5 +216,67 @@ class CartProvider extends ChangeNotifier {
       }
     }
     return min(discount, offerCoupon.maxDiscountAmount);
+  }
+
+  Future<String> placeOrder(Restaurant restaurantAssigned) async {
+    final firebaseInstance = FirebaseFirestore.instance;
+    final pizzas = getGroupedPizzas();
+    final sides = getGroupedSidesItem();
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    await Future.delayed(
+      const Duration(milliseconds: 200),
+    ); //TODO to implement razarpay order api
+
+    final docId = await firebaseInstance.collection("orders").add({
+      'razorPayOrderId': "1234",
+      'uid': uid,
+      'orderdOn': DateTime.now().toIso8601String(),
+      'resturantId': restaurantAssigned.resturantId,
+      'resturantAddress': restaurantAssigned.resturantAddress,
+      'cartCost': cartTotalAmount,
+      'deliveryCharge': 40,
+      if (copiedOffer != null) 'offerApplied': copiedOffer!.offerCode,
+      if (copiedOffer != null) 'discountAmount': discount,
+      'amountToPay': cartTotalAmount - discount + 40,
+      'isPaymentDone': false,
+      'cartCount': cartCount,
+      'cartItems': [
+        ...pizzas.entries
+            .map((e) => {
+                  "itemId": e.key.pizza.id,
+                  "itemType": "pizza",
+                  "itemName": e.key.pizza.pizzaName,
+                  "choosenSize": e.key.selectedSize.label,
+                  "itemPrice": e.key.itemPrice,
+                  "quantity": e.value,
+                  if (e.key.extraToppings != null)
+                    "extraToppings":
+                        e.key.extraToppings!.map((e) => e.toppingName).toList(),
+                  if (e.key.toppingReplacement != null)
+                    "toppingReplacement": {
+                      "toppingToBeReplaced": e
+                          .key
+                          .toppingReplacement!["toppingToBeReplaced"]!
+                          .toppingName,
+                      "replacementTopping": e
+                          .key
+                          .toppingReplacement!["replacementTopping"]!
+                          .toppingName,
+                    }
+                })
+            .toList(),
+        ...sides.entries
+            .map((e) => {
+                  "itemId": e.key.side.id,
+                  "itemType": "side",
+                  "itemName": e.key.side.sidesName,
+                  "itemPrice": e.key.itemPrice,
+                  "itemQuantity": e.value,
+                })
+            .toList(),
+      ],
+    });
+    debugPrint(docId.id);
+    return docId.id;
   }
 }

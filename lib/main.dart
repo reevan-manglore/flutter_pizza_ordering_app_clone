@@ -24,6 +24,7 @@ import 'screens/item_display_screen/items_by_offer_display_screen.dart';
 import 'screens/offer_picking_screen/offer_picking_screen.dart';
 import 'screens/user_account_info_screen/user_account_info_screen.dart';
 import 'screens/user_account_info_screen/add_new_address_screen.dart';
+import 'screens/order_view_screen/order_history_view_screen.dart';
 
 import 'helpers/loading_screen.dart';
 
@@ -128,6 +129,8 @@ class MyApp extends StatelessWidget {
                     const ItemsByOfferDisplayScreen(),
                 OfferPickingScreen.routeName: (context) =>
                     const OfferPickingScreen(),
+                OrderHistoryViewScreen.routeName: (context) =>
+                    OrderHistoryViewScreen(),
               },
             );
           }),

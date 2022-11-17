@@ -7,6 +7,7 @@ import "../../providers/user_account_provider.dart";
 
 import './add_new_address_screen.dart';
 import "../auth_screen/welcome_screen.dart";
+import '../order_view_screen/order_history_view_screen.dart';
 
 import '../../helpers/tag_symbol.dart';
 
@@ -69,6 +70,24 @@ class UserAccountInfoScreen extends StatelessWidget {
                   Navigator.of(context).pushNamed(AddNewAdressScreen.routeName);
                 },
                 title: const Text("Add addresses"),
+                trailing: const Icon(Icons.arrow_forward_ios_rounded),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              _buildHeadding("Your past orders"),
+              const SizedBox(
+                height: 8,
+              ),
+              ListTile(
+                style: ListTileStyle.list,
+                leading: const Icon(Icons.history_sharp),
+                shape: const OutlineInputBorder(),
+                onTap: () {
+                  Navigator.of(context)
+                      .pushNamed(OrderHistoryViewScreen.routeName);
+                },
+                title: const Text("View your past orders"),
                 trailing: const Icon(Icons.arrow_forward_ios_rounded),
               ),
               const SizedBox(

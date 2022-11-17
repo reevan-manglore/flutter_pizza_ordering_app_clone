@@ -4,6 +4,7 @@ import 'package:intl/intl.dart' show NumberFormat;
 
 import './cart_pizza_display_tile.dart';
 import './cart_side_display_tile.dart';
+import './cart_bottom_bar.dart';
 
 import '../../providers/cart_provider.dart';
 
@@ -262,71 +263,11 @@ class CartScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: cartData.cartCount > 0
-          ? _buildBottomBar(context, cartData.cartTotalAmount - discount + 40)
+          ? CartBottomBar(
+              context: context,
+              amtToPay: cartData.cartTotalAmount - discount + 40,
+            )
           : null,
-    );
-  }
-
-  Widget _buildBottomBar(BuildContext context, int amtToPay) {
-    final numFormatter =
-        NumberFormat.currency(locale: "HI", decimalDigits: 0, symbol: "");
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: BottomAppBar(
-          elevation: 2,
-          child: Container(
-            color: Theme.of(context).colorScheme.primaryContainer,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            height: 70,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  children: [
-                    const Text(
-                      "You Have To Pay:",
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    Row(
-                      children: [
-                        const Icon(Icons.currency_rupee),
-                        Text(
-                          numFormatter.format(amtToPay)..padRight(3),
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 24),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text("Proceed To Pay"),
-                      const SizedBox(
-                        width: 5.0,
-                      ),
-                      const Icon(Icons.arrow_forward_ios_sharp)
-                    ],
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: Colors.greenAccent,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 15),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

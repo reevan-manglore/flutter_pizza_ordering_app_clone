@@ -58,6 +58,7 @@ class _HomePageState extends State<HomePage> {
       msg.data.forEach(
         (key, value) => print("$key : $value"),
       );
+
       showOnNotificationBanner();
     });
     FirebaseMessaging.instance.getInitialMessage().then((msg) {
@@ -374,17 +375,18 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               String? currentRoute;
               Navigator.of(context).popUntil((route) {
-                //hack to get what is current route in top of stack
+                //hack to get what is current route in top of stack (works only for named routes)
                 currentRoute = route.settings.name;
                 /*here return false pops all previous pushed routes so one should return true 
                 inorder not to pop routes*/
                 return true;
               });
+
+              ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
               if (currentRoute != UserAccountInfoScreen.routeName) {
                 Navigator.of(context)
                     .pushNamed(UserAccountInfoScreen.routeName);
               }
-              ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
             },
             child: const Text(
               "Show my order",

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 import 'package:provider/provider.dart';
-
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:pizza_app/env/env.dart';
+import "package:firebase_auth/firebase_auth.dart";
 import '../../providers/cart_provider.dart';
 import '../../providers/menu_provider.dart';
+import '../../providers/user_account_provider.dart';
 
 import '../order_view_screen/order_view_screen.dart';
 
@@ -29,14 +32,30 @@ class _CartBottomBarState extends State<CartBottomBar> {
         Provider.of<MenuProvider>(context, listen: false).resturantAssigned;
 
     setState(() => isLoading = true);
-    final docId = await Provider.of<CartProvider>(context, listen: false)
+    final orderId = await Provider.of<CartProvider>(context, listen: false)
         .placeOrder(resturantAssigned!);
     setState(() => isLoading = false);
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => OrderViewScreen(docId),
-      ),
-    );
+    _openCheckout(orderId);
+    debugPrint("orderId is ${orderId}");
+  }
+
+  Future<void> _openCheckout(String orderId) async {
+    final razorPay = Provider.of<Razorpay>(context, listen: false);
+    final phoneNumber =
+        Provider.of<UserAccountProvider>(context, listen: false).phoneNumber;
+    final user = FirebaseAuth.instance.currentUser;
+    final options = {
+      "key": Env.keyId,
+      "amount": 100 * widget.amtToPay,
+      "order_id": orderId,
+      "name": "Pizza App",
+      "timeout": 60 * 5, //5 minutes
+      "prefill": {
+        "email": user?.email,
+        "contact": phoneNumber,
+      },
+    };
+    razorPay.open(options);
   }
 
   @override

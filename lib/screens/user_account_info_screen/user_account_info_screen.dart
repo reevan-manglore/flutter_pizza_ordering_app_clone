@@ -22,15 +22,6 @@ class UserAccountInfoScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("My Account"),
-        actions: [
-          IconButton(
-            onPressed: () {
-              userInfo.searchResturants(
-                  latitude: 12.814573, longitude: 74.879871, radius: 8);
-            },
-            icon: const Icon(Icons.search),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Padding(

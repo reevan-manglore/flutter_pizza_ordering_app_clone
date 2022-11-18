@@ -1,9 +1,13 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
+import 'package:pizza_app/env/env.dart';
 
 import '../models/pizza_cart_item.dart';
 import '../models/sides_cart_item.dart';
@@ -38,7 +42,6 @@ class CartProvider extends ChangeNotifier {
           break;
         }
       }
-
       if (foundSimilarPizza == null) {
         items[pizzaItem] = 1;
       } else {
@@ -218,17 +221,45 @@ class CartProvider extends ChangeNotifier {
     return min(discount, offerCoupon.maxDiscountAmount);
   }
 
+  void resetCart() {
+    _cartPizzaItems.clear();
+    _cartSidesItems.clear();
+    _copiedCoupon = null;
+    notifyListeners();
+  }
+
+  Future<String> _generateRazorPayOrder(int amountToPay) async {
+    final reqBody = {
+      "amount": amountToPay * 100, //in terms of paisas
+      "currency": "INR",
+    };
+    final razorPayToken =
+        'Basic ${base64Encode(utf8.encode("${Env.keyId}:${Env.keySecret}"))}';
+    final res = await http.post(
+      Uri.parse("https://api.razorpay.com/v1/orders"),
+      headers: {
+        "Content-Type": "application/json",
+        "authorization": razorPayToken,
+      },
+      body: jsonEncode(reqBody),
+    );
+    if (res.statusCode != 200) {
+      throw const HttpException(
+          "some error occured while making order request to razorpay");
+    }
+    return jsonDecode(res.body)["id"];
+  }
+
   Future<String> placeOrder(Restaurant restaurantAssigned) async {
     final firebaseInstance = FirebaseFirestore.instance;
     final pizzas = getGroupedPizzas();
     final sides = getGroupedSidesItem();
     final uid = FirebaseAuth.instance.currentUser?.uid;
-    await Future.delayed(
-      const Duration(milliseconds: 200),
-    ); //TODO to implement razarpay order api
+    final razorPayId =
+        await _generateRazorPayOrder(cartTotalAmount - discount + 40);
 
     final docId = await firebaseInstance.collection("orders").add({
-      'razorPayOrderId': "1234",
+      'razorPayOrderId': razorPayId,
       'uid': uid,
       'orderdOn': DateTime.now().toIso8601String(),
       'resturantId': restaurantAssigned.resturantId,
@@ -276,7 +307,7 @@ class CartProvider extends ChangeNotifier {
             .toList(),
       ],
     });
-    debugPrint(docId.id);
-    return docId.id;
+    debugPrint(razorPayId);
+    return razorPayId;
   }
 }

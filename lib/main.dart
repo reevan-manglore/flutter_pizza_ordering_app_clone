@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import "package:pizza_app/firebase_options.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:tuple/tuple.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import './providers/user_account_provider.dart';
 import './providers/menu_provider.dart';
@@ -27,6 +28,8 @@ import 'screens/user_account_info_screen/add_new_address_screen.dart';
 import 'screens/order_view_screen/order_history_view_screen.dart';
 
 import 'helpers/loading_screen.dart';
+import 'helpers/payment_success.dart';
+import 'helpers/payment_failure.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -77,6 +80,10 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => OfferProvider(),
+        ),
+        Provider(
+          create: (context) => Razorpay(),
+          dispose: (context, value) => value.clear(),
         ),
         StreamProvider.value(
           value: FirebaseAuth.instance.authStateChanges(),
@@ -131,6 +138,8 @@ class MyApp extends StatelessWidget {
                     const OfferPickingScreen(),
                 OrderHistoryViewScreen.routeName: (context) =>
                     OrderHistoryViewScreen(),
+                PaymentSuccess.routeName: (context) => const PaymentSuccess(),
+                PaymentFailure.routeName: (context) => const PaymentFailure(),
               },
             );
           }),

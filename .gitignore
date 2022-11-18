@@ -1,3 +1,10 @@
+#secrets
+
+.env
+*.env
+env.dart
+env.g.dart
+
 # Miscellaneous
 *.class
 *.log
@@ -8,6 +15,7 @@
 .buildlog/
 .history
 .svn/
+
 
 # IntelliJ related
 *.iml

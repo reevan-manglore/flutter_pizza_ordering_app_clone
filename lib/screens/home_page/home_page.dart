@@ -5,6 +5,7 @@ import 'package:pizza_app/models/offer_cupon.dart';
 import 'package:provider/provider.dart';
 import 'package:badges/badges.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import "package:razorpay_flutter/razorpay_flutter.dart";
 
 import "package:geoflutterfire/geoflutterfire.dart";
 
@@ -25,11 +26,14 @@ import './address_picker.dart';
 
 import '../cart_screen/cart_screen.dart';
 import '../user_account_info_screen/user_account_info_screen.dart';
+import "../order_view_screen/order_view_screen.dart";
 
 import '../item_display_screen/items_by_offer_display_screen.dart';
 
 import '../../helpers/error_section.dart';
 import '../../helpers/not_found.dart';
+import '../../helpers/payment_failure.dart';
+import '../../helpers/payment_success.dart';
 
 class HomePage extends StatefulWidget {
   static const String routeName = "/";
@@ -39,28 +43,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late final Razorpay _razorPay;
   @override
   void initState() {
     FirebaseMessaging.onMessage.listen((msg) {
-      log("notiication recived");
-      showOnNotificationBanner();
+      log("notiication recived on foreground mode");
+      final orderDocId = msg.data["orderDocId"];
+      showOnNotificationBanner(orderDocId);
     });
-    //TODO to delete this unsused commented code
-    // FirebaseMessaging.onBackgroundMessage((msg) async {
-    //   /*to show notification when app is terminated state
-    //     if this function  not registerd somehow flutter doesnt show notification
-    //     when app is in terminated  state
-    //   */
-    // });
+
     FirebaseMessaging.onMessageOpenedApp.listen((msg) {
       log("notiication recived when app is in background mode");
-      log("${msg.data.length}");
-      msg.data.forEach(
-        (key, value) => print("$key : $value"),
-      );
-
-      showOnNotificationBanner();
+      final orderDocId = msg.data["orderDocId"];
+      showOnNotificationBanner(orderDocId);
     });
+
     FirebaseMessaging.instance.getInitialMessage().then((msg) {
       /*
          this function will trigger when user press  on order accepted noticiation
@@ -69,10 +66,15 @@ class _HomePageState extends State<HomePage> {
          but not through pressing notifcation
       */
       if (msg != null) {
-        log("notiication recived");
-        showOnNotificationBanner();
+        log("notiication recived on terminated mode");
+        final orderDocId = msg.data["orderDocId"];
+        showOnNotificationBanner(orderDocId);
       }
     });
+    _razorPay = Provider.of<Razorpay>(context, listen: false);
+    _razorPay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorPay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentFailure);
+    _razorPay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
     Provider.of<MenuProvider>(context, listen: false).fetchAndSetProducts();
     Provider.of<OfferProvider>(context, listen: false).fetchAndSetOffers();
     super.initState();
@@ -340,6 +342,12 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  @override
+  void dispose() {
+    _razorPay.clear();
+    super.dispose();
+  }
+
   Widget _buildHeader(String title) {
     return Text(
       title,
@@ -348,7 +356,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void showOnNotificationBanner() {
+  void showOnNotificationBanner(String? orderDocId) {
     ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
     ScaffoldMessenger.of(context).showMaterialBanner(
       MaterialBanner(
@@ -371,30 +379,50 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          TextButton(
-            onPressed: () {
-              String? currentRoute;
-              Navigator.of(context).popUntil((route) {
-                //hack to get what is current route in top of stack (works only for named routes)
-                currentRoute = route.settings.name;
-                /*here return false pops all previous pushed routes so one should return true 
+          if (orderDocId != null)
+            TextButton(
+              onPressed: () {
+                String? currentRoute;
+                Navigator.of(context).popUntil((route) {
+                  //hack to get what is current route in top of stack (works only for named routes)
+                  currentRoute = route.settings.name;
+                  /*here return false pops all previous pushed routes so one should return true 
                 inorder not to pop routes*/
-                return true;
-              });
+                  return true;
+                });
 
-              ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
-              if (currentRoute != UserAccountInfoScreen.routeName) {
-                Navigator.of(context)
-                    .pushNamed(UserAccountInfoScreen.routeName);
-              }
-            },
-            child: const Text(
-              "Show my order",
-              style: TextStyle(color: Colors.blue),
+                ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+                if (currentRoute != UserAccountInfoScreen.routeName) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (ctx) => OrderViewScreen(orderDocId),
+                    ),
+                  );
+                }
+              },
+              child: const Text(
+                "Show my order",
+                style: TextStyle(color: Colors.blue),
+              ),
             ),
-          ),
         ],
       ),
     );
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse res) {
+    debugPrint("payment successfull with id ${res.orderId}");
+    Provider.of<CartProvider>(context, listen: false).resetCart();
+    Navigator.of(context).pushNamed(PaymentSuccess.routeName);
+  }
+
+  void _handlePaymentFailure(PaymentFailureResponse res) {
+    debugPrint("payment failed with error ${res.message}");
+    Navigator.of(context).pushNamed(PaymentFailure.routeName);
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse res) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("You selected wallet ${res.walletName}")));
   }
 }

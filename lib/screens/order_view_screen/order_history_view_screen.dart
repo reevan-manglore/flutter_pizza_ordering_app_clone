@@ -27,6 +27,7 @@ class OrderHistoryViewScreen extends StatelessWidget {
           future: firebaseInstance
               .collection("orders")
               .where("uid", isEqualTo: uid)
+              .where("isPaymentDone", isEqualTo: true)
               .get(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {

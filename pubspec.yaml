@@ -93,6 +93,7 @@ flutter:
     - lib/assets/images/non_veg-pizza-avatar.jpg
     - lib/assets/images/sides-avatar.jpg
     - lib/assets/images/dessert-avatar.jpg
+    - lib/assets/images/drinks-avatar.jpg
     - lib/assets/images/sample-pizza-image.jpg
     - lib/assets/images/login-page-pizza-avatar.png
     - lib/assets/lotties/signup_animation.json

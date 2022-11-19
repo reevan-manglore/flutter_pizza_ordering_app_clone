@@ -67,6 +67,20 @@ class _ItemsByCategoryDisplayScreenState
           sortByBestSeller: true,
         );
         break;
+      case "desserts":
+        _sides = Provider.of<MenuProvider>(context).findSides(
+          category: SidesCategory.desserts,
+          veganOnly: veganPreferance.isveganOnly,
+          sortByBestSeller: true,
+        );
+        break;
+      case "drinks":
+        _sides = Provider.of<MenuProvider>(context).findSides(
+          category: SidesCategory.drinks,
+          veganOnly: veganPreferance.isveganOnly,
+          sortByBestSeller: true,
+        );
+        break;
       default:
     }
     return Scaffold(

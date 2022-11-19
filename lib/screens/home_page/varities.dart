@@ -63,11 +63,16 @@ class Varites extends StatelessWidget {
           "Snacks",
           "lib/assets/images/sides-avatar.jpg",
         ),
-        // buildAvatar(
-        //   context,
-        //   "Dessert",
-        //   "lib/assets/images/dessert-avatar.jpg",
-        // ),
+        buildAvatar(
+          context,
+          "Desserts",
+          "lib/assets/images/dessert-avatar.jpg",
+        ),
+        buildAvatar(
+          context,
+          "Drinks",
+          "lib/assets/images/drinks-avatar.jpg",
+        ),
       ],
     );
   }

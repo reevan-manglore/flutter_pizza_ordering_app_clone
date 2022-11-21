@@ -270,13 +270,13 @@ class _AddNewAdressScreenState extends State<AddNewAdressScreen> {
       return _buildAlertDialog(title: "Please confirm location");
     }
     setState(() {
-      // _locationName = poppedData["locationName"];
-      // _latitude = poppedData["latitude"];
-      // _longitude = poppedData["longitude"];
-      /*TODO to refactor this part of code   */
-      _locationName = "Neighbourhood Of Nowhere Street";
-      _latitude = 12.8709179;
-      _longitude = 74.8267859;
+      _locationName = poppedData["locationName"];
+      _latitude = poppedData["latitude"];
+      _longitude = poppedData["longitude"];
+      /*TODO to delete this part of code   */
+      // _locationName = "Neighbourhood Of Nowhere Street";
+      // _latitude = 12.8709179;
+      // _longitude = 74.8267859;
     });
   }
 

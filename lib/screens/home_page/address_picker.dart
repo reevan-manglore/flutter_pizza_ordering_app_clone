@@ -213,12 +213,11 @@ class _AddressPickerState extends State<AddressPicker> {
       _buildAlertDialog(title: "Please confirm location");
       return false;
     }
-    /*TODO to refactor this part of code   */
 
     userAccount.addressToDeliver = UserAddress(
       latitude: poppedData["latitude"],
       longitude: poppedData["longitude"],
-      address: "Buckingam palace",
+      address: poppedData["locationName"],
     );
 
     // setState(() {

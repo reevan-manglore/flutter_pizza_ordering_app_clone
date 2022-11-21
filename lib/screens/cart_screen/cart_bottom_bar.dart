@@ -36,7 +36,7 @@ class _CartBottomBarState extends State<CartBottomBar> {
         .placeOrder(resturantAssigned!);
     setState(() => isLoading = false);
     _openCheckout(orderId);
-    debugPrint("orderId is ${orderId}");
+    debugPrint("orderId is $orderId");
   }
 
   Future<void> _openCheckout(String orderId) async {

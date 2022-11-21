@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
+import 'package:geocode/geocode.dart';
 
 class MapsDisplayPage extends StatefulWidget {
   final double initialLatitude;
@@ -14,8 +16,23 @@ class MapsDisplayPage extends StatefulWidget {
 }
 
 class _MapsDisplayPageState extends State<MapsDisplayPage> {
+  late final MapController _mapController;
+
+  @override
+  void initState() {
+    _mapController = MapController(
+      initPosition: GeoPoint(
+        latitude: widget.initialLatitude,
+        longitude: widget.initialLongitude,
+      ),
+    );
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool _isLocationConfirmLocationBtnPressed = false;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Choose your location"),
@@ -30,10 +47,21 @@ class _MapsDisplayPageState extends State<MapsDisplayPage> {
               child: Container(
                 color: Colors.blue.shade100,
                 child: Center(
-                  child: Text(
-                    "your currently residing in latitude = ${widget.initialLatitude} , longitude = ${widget.initialLongitude}",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 22),
+                  child: OSMFlutter(
+                    isPicker: true,
+                    controller: _mapController,
+                    initZoom: 14,
+                    minZoomLevel: 8,
+                    stepZoom: 1.0,
+                    markerOption: MarkerOption(
+                      advancedPickerMarker: const MarkerIcon(
+                        icon: Icon(
+                          Icons.location_on,
+                          color: Colors.red,
+                          size: 80,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -42,19 +70,38 @@ class _MapsDisplayPageState extends State<MapsDisplayPage> {
               padding:
                   const EdgeInsets.symmetric(horizontal: 25.0, vertical: 10.0),
               child: ElevatedButton(
-                onPressed: () {
-                  Map<String, dynamic> data = {
-                    "locationName": "In Middle Of Nowhere",
-                    "latitude": widget.initialLatitude,
-                    "longitude": widget.initialLongitude,
-                  };
-                  Navigator.pop(context, data);
-                },
-                child: Text(
-                  "Confirm Location",
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-                ),
+                onPressed: _isLocationConfirmLocationBtnPressed == true
+                    ? null
+                    : () async {
+                        setState(
+                          () => _isLocationConfirmLocationBtnPressed = true,
+                        );
+                        final pickedLocation =
+                            await _mapController.selectAdvancedPositionPicker();
+                        final locationName = await GeoCode().reverseGeocoding(
+                          latitude: pickedLocation.latitude,
+                          longitude: pickedLocation.longitude,
+                        );
+                        Map<String, dynamic> data = {
+                          "locationName": locationName.streetAddress,
+                          "latitude": pickedLocation.latitude,
+                          "longitude": pickedLocation.longitude,
+                        };
+                        Navigator.pop(context, data);
+                      },
+                child: _isLocationConfirmLocationBtnPressed == true
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : Text(
+                        "Confirm Location",
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary),
+                      ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColor,
                   alignment: Alignment.center,
@@ -70,5 +117,11 @@ class _MapsDisplayPageState extends State<MapsDisplayPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _mapController.dispose();
+    super.dispose();
   }
 }

@@ -193,7 +193,7 @@ class _AddNewAdressScreenState extends State<AddNewAdressScreen> {
                         ),
                       )
                     : Text(
-                        "Register me",
+                        "Add this location",
                         style: TextStyle(
                             color: Theme.of(context).colorScheme.onPrimary),
                       ),

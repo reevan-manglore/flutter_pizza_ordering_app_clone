@@ -127,7 +127,11 @@ class MenuProvider extends ChangeNotifier {
       // });
       notifyListeners();
       final resturant = await _fetchNearbuyRestaurants();
-      if (resturant == null) return;
+      if (resturant == null) {
+        _pizzas = [];
+        _sides = [];
+        return;
+      }
       resturantAssigned = Restaurant.fromMap(
           resturantId: resturant.id,
           data: resturant.data() as Map<String, dynamic>);

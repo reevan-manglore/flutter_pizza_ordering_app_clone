@@ -1,13 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:pizza_app/models/offer_cupon.dart';
 import 'package:provider/provider.dart';
 import 'package:badges/badges.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import "package:razorpay_flutter/razorpay_flutter.dart";
-
-import "package:geoflutterfire/geoflutterfire.dart";
 
 import '../../providers/menu_provider.dart';
 import '../../providers/pizza_item_provider.dart';
@@ -17,6 +14,7 @@ import '../../providers/offer_provider.dart';
 import "../../providers/vegan_preferance_provider.dart";
 import '../../helpers/custom_toast.dart';
 
+import '../../models/offer_cupon.dart';
 import 'hero_offer_card.dart';
 import 'sub_offer_card.dart';
 import './varities.dart';
@@ -31,9 +29,9 @@ import "../order_view_screen/order_view_screen.dart";
 import '../item_display_screen/items_by_offer_display_screen.dart';
 
 import '../../helpers/error_section.dart';
-import '../../helpers/not_found.dart';
-import '../../helpers/payment_failure.dart';
-import '../../helpers/payment_success.dart';
+import '../../widgets/not_found.dart';
+import '../cart_screen/payment_failure.dart';
+import '../cart_screen/payment_success.dart';
 
 class HomePage extends StatefulWidget {
   static const String routeName = "/";
@@ -87,7 +85,6 @@ class _HomePageState extends State<HomePage> {
     final _offerData = Provider.of<OfferProvider>(context);
     final veganPreferance = Provider.of<VeganPreferanceProvider>(context);
     List bestSellers = [];
-    log("menu data is loading : ${_menuData.isLoading}");
     if (!_menuData.isLoading) {
       bestSellers = [
         ..._menuData.findPizzas(
@@ -128,9 +125,6 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             tooltip: "Your Cart",
             onPressed: () {
-              print(
-                  "${Geoflutterfire().point(latitude: 12.812084, longitude: 74.881553).data}");
-
               Navigator.of(context).pushNamed(CartScreen.routeName);
             },
             icon: Badge(

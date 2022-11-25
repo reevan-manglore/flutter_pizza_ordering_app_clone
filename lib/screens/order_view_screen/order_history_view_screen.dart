@@ -6,7 +6,7 @@ import 'package:intl/intl.dart' show DateFormat, NumberFormat;
 
 import './order_view_screen.dart';
 
-import '../../helpers/dashed_lined_divider.dart';
+import '../../widgets/dashed_lined_divider.dart';
 
 class OrderHistoryViewScreen extends StatelessWidget {
   static const String routeName = "/pastOrders";
@@ -28,6 +28,7 @@ class OrderHistoryViewScreen extends StatelessWidget {
               .collection("orders")
               .where("uid", isEqualTo: uid)
               .where("isPaymentDone", isEqualTo: true)
+              .orderBy("orderdOn", descending: true)
               .get(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {

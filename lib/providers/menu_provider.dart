@@ -41,7 +41,6 @@ class MenuProvider extends ChangeNotifier {
 
     _isLoading = false;
     fetchAndSetProducts();
-    log("set user location called in menu provider");
   }
 
   String? get userLocation {
@@ -86,7 +85,7 @@ class MenuProvider extends ChangeNotifier {
           field: field,
           strictMode: true,
         );
-    log("updated");
+
     List<DocumentSnapshot> documents = await stream.first;
     if (documents.isEmpty) {
       return null;
@@ -96,7 +95,6 @@ class MenuProvider extends ChangeNotifier {
   }
 
   Future<void> fetchAndSetProducts() async {
-    log("in fetch and set products userLocation is $_userLocationHash ");
     if (_userLocationHash == null) return;
     if (_isLoading) return;
     try {
@@ -142,17 +140,14 @@ class MenuProvider extends ChangeNotifier {
       final menuItems = await Future.wait(itemsToFetch);
 
       final uid = FirebaseAuth.instance.currentUser?.uid;
-      final userSnapshot = await FirebaseFirestore.instance
-          .collection("users")
-          .where("uid", isEqualTo: uid)
-          .get();
+      final userSnapshot =
+          await FirebaseFirestore.instance.collection("users").doc(uid).get();
 
       late List<dynamic>? userFavourites;
       //if in case faviourites field is not present than when referncing
       //faviourites field will throw array so i enclosed in try catch
       try {
-        userFavourites =
-            userSnapshot.docs.first["favourites"] as List<dynamic>?;
+        userFavourites = userSnapshot.data()?["favourites"] as List<dynamic>?;
       } catch (e) {
         userFavourites = null;
       }
@@ -161,7 +156,6 @@ class MenuProvider extends ChangeNotifier {
         final isItemUserFavourite = userFavourites == null
             ? false
             : userFavourites.contains(element.id);
-        log("${element.id} is faviourite $isItemUserFavourite");
         if (element.data()?["itemType"] == "pizza") {
           tempPizzaArr.add(PizzaItemProvider.fromMap(
               element.id, element.data()!,
@@ -180,22 +174,15 @@ class MenuProvider extends ChangeNotifier {
         most recent function call to _pizzas and for _sides
       */
       if (_timeDuringThisFetch != _timeDuringLastFetch) return;
-      //TODO to delete this debug piece of code
-      // if (userLocation == "tdm0ztt50") {
-      //   tempPizzaArr.removeWhere((element) =>
-      //       element.pizzaName == "Veggie Extravaganza" ||
-      //       element.pizzaName == "Veggie Paradise");
-      // }
+
       _pizzas = tempPizzaArr;
       _sides = tempSidesArr;
-      _pizzas.add(_samplePizza);
-      _sides.add(_sampleSide);
     } on SocketException catch (e) {
       log("there was some problem in clients internet connection$e");
       _errMsg = e.message;
       _hasError = true;
     } on FirebaseException catch (e) {
-      log("there was some problem while fetching data $e");
+      log("there was some problem while fetching data  $e");
       _errMsg = e.message;
       _hasError = true;
     } catch (e) {
@@ -279,85 +266,39 @@ class MenuProvider extends ChangeNotifier {
   }
 }
 
-const _dummyText =
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque sit amet vehicula purus, in viverra risus. Sed a sodales arcu. Proin luctus faucibus tortor ac venenatis.";
-const pizzaImageUrl =
-    "https://media.istockphoto.com/photos/slice-of-pizza-isolated-on-white-background-picture-id1295596568?b=1&k=20&m=1295596568&s=170667a&w=0&h=iYtQ3yZhbJ7Qo_qFpZDN3KIJ5zkhiJGqo2OjL6aHyzE=";
-
-const sidesImageUrl =
-    "https://media.istockphoto.com/photos/tachos-al-pastore-picture-id1366126429?b=1&k=20&m=1366126429&s=170667a&w=0&h=ffhGlTx_Jiv_TdPzZpYqEhJACl6MZFo0q2hkhUAJxcE=";
-
-final _samplePizza = PizzaItemProvider(
-  id: "567",
-  pizzaName: "Non Vegans Paradise",
-  pizzaImageUrl: pizzaImageUrl,
-  description: _dummyText,
-  price: {
-    PizzaSizes.small: 150,
-    PizzaSizes.medium: 300,
-    PizzaSizes.large: 500,
-  },
-  isBestSeller: true,
-  isCustomizable: true,
-);
-
-final _sampleSide = SidesItemProvider(
-  id: "gad625",
-  category: SidesCategory.snacks,
-  sidesName: "Non Veg Tachos",
-  sidesImageUrl: sidesImageUrl,
-  sidesDescription: _dummyText,
-  price: 140,
-  isBestSeller: true,
-);
 
 
- // PizzaItemProvider(
-      //   id: "123",
-      //   pizzaName: "Veggie Extravaganza",
-      //   pizzaImageUrl: pizzaImageUrls[0],
-      //   description:
-      //       "Indulge in an vegetable heaven created with our unique vegie extravagenza",
-      //   price: {
-      //     PizzaSizes.small: 150,
-      //     PizzaSizes.medium: 300,
-      //     PizzaSizes.large: 500,
-      //   },
-      //   isBestSeller: true,
-      //   isVegan: true,
-      //   isCustomizable: true,
-      // ),
-      // PizzaItemProvider(
-      //   id: "456",
-      //   pizzaName: "Veggie Paradise",
-      //   pizzaImageUrl: pizzaImageUrls[1],
-      //   description:
-      //       "Indulge in an vegetable world created with our unique veggie extravagenza",
-      //   price: {
-      //     // PizzaSizes.small: 150,
-      //     PizzaSizes.medium: 300,
-      //     // PizzaSizes.large: 500,
-      //   },
-      //   isVegan: true,
-      // ),
 
 
-       // SidesItemProvider(
-      //   id: "abc124",
-      //   category: SidesCategory.snacks,
-      //   sidesName: "Choco Lava Cake",
-      //   sidesImageUrl: sidesImageUrls[2],
-      //   sidesDescription: _dummyText,
-      //   price: 80,
-      //   isVegan: true,
-      // ),
-      // SidesItemProvider(
-      //   id: "bcd538",
-      //   category: SidesCategory.snacks,
-      //   sidesName: "Vegetable Puffs",
-      //   sidesImageUrl: sidesImageUrls[1],
-      //   sidesDescription: _dummyText,
-      //   price: 60,
-      //   isBestSeller: true,
-      //   isVegan: true,
-      // ),
+
+
+/* Sample Schema Of PizzaItemProvider And SidesItemProvider
+ PizzaItemProvider(
+        id: "123",
+        pizzaName: "Veggie Extravaganza",
+        pizzaImageUrl: pizzaImageUrls[0],
+        description:
+            "Indulge in an vegetable heaven created with our unique vegie extravagenza",
+        price: {
+          PizzaSizes.small: 150,
+          PizzaSizes.medium: 300,
+          PizzaSizes.large: 500,
+        },
+        isBestSeller: true,
+        isVegan: true,
+        isCustomizable: true,
+      ),
+      
+
+      SidesItemProvider(
+        id: "bcd538",
+        category: SidesCategory.snacks,
+        sidesName: "Vegetable Puffs",
+        sidesImageUrl: sidesImageUrls[1],
+        sidesDescription: _dummyText,
+        price: 60,
+        isBestSeller: true,
+        isVegan: true,
+      ),
+
+  */ 

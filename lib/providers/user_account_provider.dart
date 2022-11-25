@@ -5,8 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-import '../../models/restaurant.dart';
-
 import "package:geoflutterfire/geoflutterfire.dart";
 
 import '../models/user_address.dart';
@@ -39,7 +37,6 @@ class UserAccountProvider with ChangeNotifier {
       {required double latitude,
       required double longitude,
       required double radius}) async {
-    log("called");
     GeoFirePoint center =
         Geoflutterfire().point(latitude: latitude, longitude: longitude);
 
@@ -58,15 +55,9 @@ class UserAccountProvider with ChangeNotifier {
           radius: radius,
           field: field,
         );
-    log("updated");
+
     List<DocumentSnapshot> documents = await stream.first;
     if (documents.isEmpty) return;
-    print(Restaurant.fromMap(
-            resturantId: documents.first.id,
-            data: documents.first.data() as Map<String, dynamic>)
-        .resturantAddress);
-
-    print("hello world");
   }
 
   //try to fetch user details if user is registerd then this returns true or else false
@@ -85,21 +76,26 @@ class UserAccountProvider with ChangeNotifier {
       return false;
     }
     final uid = FirebaseAuth.instance.currentUser!.uid;
-    final querySnapshot = await FirebaseFirestore.instance
-        .collection("users")
-        .where(
-          "uid",
-          isEqualTo: uid,
-        )
-        .get();
-    if (querySnapshot.docs.isEmpty) {
+    late DocumentSnapshot<Map<String, dynamic>> querySnapshot;
+    try {
+      querySnapshot =
+          await FirebaseFirestore.instance.collection("users").doc(uid).get();
+    } catch (e) {
+      log("there was an error while reading from users collection ${e.toString()}");
+      _isLoading = false;
+      WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback((_) {
+        notifyListeners();
+      });
+      return false;
+    }
+    if (!querySnapshot.exists) {
       _isLoading = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         notifyListeners();
       });
       return false;
     }
-    final docs = querySnapshot.docs.first.data();
+    final docs = querySnapshot.data()!;
     _name = docs["name"];
     _phoneNumber = docs["phoneNumber"];
     /*reset any of previously saved adrress if present happens usualy when user

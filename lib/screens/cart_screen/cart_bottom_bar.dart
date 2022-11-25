@@ -8,8 +8,6 @@ import '../../providers/cart_provider.dart';
 import '../../providers/menu_provider.dart';
 import '../../providers/user_account_provider.dart';
 
-import '../order_view_screen/order_view_screen.dart';
-
 class CartBottomBar extends StatefulWidget {
   const CartBottomBar({
     Key? key,

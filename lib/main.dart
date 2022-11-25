@@ -28,8 +28,8 @@ import 'screens/user_account_info_screen/add_new_address_screen.dart';
 import 'screens/order_view_screen/order_history_view_screen.dart';
 
 import 'helpers/loading_screen.dart';
-import 'helpers/payment_success.dart';
-import 'helpers/payment_failure.dart';
+import 'screens/cart_screen/payment_success.dart';
+import 'screens/cart_screen/payment_failure.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

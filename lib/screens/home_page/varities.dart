@@ -51,7 +51,7 @@ class Varites extends StatelessWidget {
         buildAvatar(
           context,
           "Veg Pizza",
-          "lib/assets/images/veg-pizza-avatar.png",
+          "lib/assets/images/veg-pizza-avatar.jpg",
         ),
         buildAvatar(
           context,

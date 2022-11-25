@@ -1,4 +1,3 @@
-import "dart:developer" show log;
 import 'package:flutter/material.dart';
 import "package:provider/provider.dart";
 import "package:firebase_auth/firebase_auth.dart";
@@ -9,7 +8,7 @@ import './add_new_address_screen.dart';
 import "../auth_screen/welcome_screen.dart";
 import '../order_view_screen/order_history_view_screen.dart';
 
-import '../../helpers/tag_symbol.dart';
+import '../../widgets/tag_symbol.dart';
 
 class UserAccountInfoScreen extends StatelessWidget {
   static const routeName = "/user-account-info-screen";
@@ -93,7 +92,6 @@ class UserAccountInfoScreen extends StatelessWidget {
                 leading: const Icon(Icons.logout_outlined),
                 shape: const OutlineInputBorder(),
                 onTap: () async {
-                  log("print logged out");
                   try {
                     final shouldLogout = await showDialog<bool>(
                       context: context,

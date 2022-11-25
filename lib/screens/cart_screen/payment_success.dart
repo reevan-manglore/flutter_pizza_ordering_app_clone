@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import "package:lottie/lottie.dart";
 
-import "../screens/cart_screen/cart_screen.dart";
-import '../screens/home_page/home_page.dart';
+import '../home_page/home_page.dart';
 
-class PaymentFailure extends StatelessWidget {
-  const PaymentFailure({super.key});
-  static const routeName = "/payment-failure";
+class PaymentSuccess extends StatelessWidget {
+  const PaymentSuccess({super.key});
+  static const routeName = "/payment-success";
 
   @override
   Widget build(BuildContext context) {
@@ -17,15 +16,16 @@ class PaymentFailure extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Lottie.asset(
-              "lib/assets/lotties/payment_failed.json",
+              "lib/assets/lotties/payment success.json",
               height: 300,
               alignment: Alignment.center,
+              repeat: false,
             ),
             const SizedBox(
               height: 24,
             ),
             const Text(
-              "Your payment failed due to some unexpected reasons",
+              "Your payment is successfull you will shortly recive notification about confirmation about your order",
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22),
               textAlign: TextAlign.center,
             ),
@@ -36,14 +36,10 @@ class PaymentFailure extends StatelessWidget {
               onPressed: () {
                 Navigator.popUntil(
                     context, ModalRoute.withName(HomePage.routeName));
-                Navigator.of(context).pushNamed(CartScreen.routeName);
               },
               child: const Text(
-                "Return to your cart page",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                ),
+                "Return to home page",
+                style: TextStyle(color: Colors.white, fontSize: 18),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).primaryColor,

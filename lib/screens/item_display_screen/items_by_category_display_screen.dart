@@ -12,7 +12,7 @@ import './sides_item_display_card.dart';
 import './pizza_item_display_card.dart';
 import "../cart_screen/cart_screen.dart";
 
-import '../../helpers/not_found.dart';
+import '../../widgets/not_found.dart';
 
 class ItemsByCategoryDisplayScreen extends StatefulWidget {
   static const String routeName = "/category-screen";

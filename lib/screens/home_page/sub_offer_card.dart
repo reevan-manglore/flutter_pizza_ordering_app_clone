@@ -46,11 +46,15 @@ class SubOfferCard extends StatelessWidget {
             ),
           ),
           child: Row(children: [
-            Image.asset(
-              "lib/assets/images/veg-pizza-avatar.png",
-              alignment: Alignment.centerLeft,
-              width: 100,
-              fit: BoxFit.cover,
+            Hero(
+              tag: offerCode,
+              child: Image.asset(
+                "lib/assets/images/offer-percentage-avatar.png",
+                alignment: Alignment.centerLeft,
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
+              ),
             ),
             const SizedBox(
               width: 10,

@@ -4,13 +4,14 @@ class OfferItemDisplayCard extends StatelessWidget {
   final String title;
   final String description;
   final String offerCode;
+  final bool isHeroOffer;
 
-  const OfferItemDisplayCard({
-    super.key,
-    required this.title,
-    required this.description,
-    required this.offerCode,
-  });
+  const OfferItemDisplayCard(
+      {super.key,
+      required this.title,
+      required this.description,
+      required this.offerCode,
+      required this.isHeroOffer});
 
   @override
   Widget build(BuildContext context) {
@@ -76,12 +77,26 @@ class OfferItemDisplayCard extends StatelessWidget {
               const SizedBox(
                 width: 10,
               ),
-              Image.asset(
-                "lib/assets/images/pizza-offer-avatar.png",
-                alignment: Alignment.centerLeft,
-                width: 100,
-                fit: BoxFit.cover,
-              ),
+              isHeroOffer
+                  ? Hero(
+                      tag: offerCode,
+                      child: Image.asset(
+                        "lib/assets/images/pizza-offer-avatar.png",
+                        alignment: Alignment.centerLeft,
+                        width: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : Hero(
+                      tag: offerCode,
+                      child: Image.asset(
+                        "lib/assets/images/offer-percentage-avatar.png",
+                        alignment: Alignment.centerLeft,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
             ],
           ),
         ),

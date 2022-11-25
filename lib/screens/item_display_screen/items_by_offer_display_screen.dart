@@ -13,7 +13,7 @@ import './offer_item_display_card.dart';
 import './pizza_item_display_card.dart';
 import './sides_item_display_card.dart';
 
-import '../../helpers/not_found.dart';
+import '../../widgets/not_found.dart';
 
 class ItemsByOfferDisplayScreen extends StatefulWidget {
   const ItemsByOfferDisplayScreen({Key? key}) : super(key: key);
@@ -35,8 +35,8 @@ class _ItemsByOfferDisplayScreenState extends State<ItemsByOfferDisplayScreen> {
   void didChangeDependencies() {
     if (!didChangeDependencyRun) {
       offerId = ModalRoute.of(context)!.settings.arguments as String;
-      offerData = Provider.of<OfferProvider>(context).getOfferById(offerId)
-          as ItemOffer;
+      offerData = Provider.of<OfferProvider>(context, listen: false)
+          .getOfferById(offerId) as ItemOffer;
       veganPreferance = Provider.of<VeganPreferanceProvider>(context);
       didChangeDependencyRun = true;
       super.didChangeDependencies();
@@ -58,6 +58,7 @@ class _ItemsByOfferDisplayScreenState extends State<ItemsByOfferDisplayScreen> {
           title: offerData.title,
           description: offerData.description,
           offerCode: offerData.offerCode,
+          isHeroOffer: context.read<OfferProvider>().heroOffer?.id == offerId,
         ),
         Row(
           children: [

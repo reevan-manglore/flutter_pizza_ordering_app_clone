@@ -9,7 +9,7 @@ import '../../models/user_address.dart';
 
 import '../maps_display_screen/maps_display_screen.dart';
 
-import '../../helpers/tag_symbol.dart';
+import '../../widgets/tag_symbol.dart';
 
 class AddressPicker extends StatefulWidget {
   const AddressPicker({super.key});

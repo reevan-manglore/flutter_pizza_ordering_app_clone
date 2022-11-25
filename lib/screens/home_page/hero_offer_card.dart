@@ -90,11 +90,14 @@ class HeroOfferCard extends StatelessWidget {
                 const SizedBox(
                   width: 10,
                 ),
-                Image.asset(
-                  "lib/assets/images/pizza-offer-avatar.png",
-                  alignment: Alignment.centerLeft,
-                  width: 100,
-                  fit: BoxFit.cover,
+                Hero(
+                  tag: offerCode,
+                  child: Image.asset(
+                    "lib/assets/images/pizza-offer-avatar.png",
+                    alignment: Alignment.centerLeft,
+                    width: 100,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ],
             ),

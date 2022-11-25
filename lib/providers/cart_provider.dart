@@ -258,7 +258,7 @@ class CartProvider extends ChangeNotifier {
     final razorPayId =
         await _generateRazorPayOrder(cartTotalAmount - discount + 40);
 
-    final docId = await firebaseInstance.collection("orders").add({
+    await firebaseInstance.collection("orders").add({
       'razorPayOrderId': razorPayId,
       'uid': uid,
       'orderdOn': DateTime.now().toIso8601String(),
@@ -307,7 +307,6 @@ class CartProvider extends ChangeNotifier {
             .toList(),
       ],
     });
-    debugPrint(razorPayId);
     return razorPayId;
   }
 }

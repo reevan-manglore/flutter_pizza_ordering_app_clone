@@ -48,7 +48,6 @@ class OfferProvider with ChangeNotifier {
           .get();
       final offerCoupons = queySnapshot.docs;
       for (var element in offerCoupons) {
-        print(element.data()["title"]);
         tempOfferArr.add(
           OfferCoupon.fromMap(
             documentId: element.id,

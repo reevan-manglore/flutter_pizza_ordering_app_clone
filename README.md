@@ -2,22 +2,33 @@
 # Pizza Delivery App Clone
 
 ## Clone built using flutter and firebase
-A fully functional pizza delivery app clone built using
-Flutter and Firebase provide features such as authentication, picking delivery addresses,
-Item customization such as size, adding extra toppings, or removing any one of the toppings; payment integration using Razorpay; notification for confirmation of order
-viewing order history and some other features
+A fully functional 40+ screens pizza delivery app clone built using
+Flutter and Firebase with  features such as authentication, picking delivery addresses, Item customization such as size, adding extra toppings, or removing any one of the toppings; payment gateway integration using Razorpay.
+
+## App Features
+### user is able to do
+1. Signin,signup.
+2. Pick a delivery address on the map.
+3. Apply discount coupons to the cart's net amount or to specific items.
+4. Customize the pizza's size and toppings.
+5. Insert and remove items from the shopping cart.
+6. Make payments using their preferred payment method.
+7. View the order history.
+8. To save the address for future use
+
+
 
 ## Lessons Learned
 1. I learned how to integrate payment gateways.
-2. Learn how to handle web hooks.
-3. learned about state management using the provider package
-4. I learned how to use Firebase authentication.
+2. Got familiar with using web hooks.
+3. Learned about state management using the provider package
+4. I learnt how to use Firebase authentication.
 5. learned to write cloud functions.
-6. I learned how to handle notifications from Firebase Cloud Messaging.
+6. I learned how to create and handle  Firebase Cloud Messaging notifications in app
 7. I learned how to integrate maps and how to pick the user's location. using the geolocator package
 8. learned about geoqueries and geohashes.
 9. I learned how to use the Firestore database.
-10. learned how to write Firebase security rules.
+10. Learned how to write Firebase security rules.
 11. I learned about the various approaches to dealing with environment variables in Flutter.
 12. I learned how to use various other packages.
 
@@ -38,10 +49,6 @@ viewing order history and some other features
 
 
 
-## Demo
-
-Insert gif or link to demo
-
 
 
 ## Screenshots
@@ -61,7 +68,7 @@ Insert gif or link to demo
 
 
 
-### User registartion page
+### User registration page
 <span>
   <img src = "./readme/user-registartion-view.jpg" width = "200px"/>
      &ensp; &ensp;
@@ -103,7 +110,7 @@ Insert gif or link to demo
      &ensp; &ensp;
  </span>
 
-#### resturant not found page
+#### not-found restaurant page
 <span>
    <img src = "./readme/no-resturant-found.jpg" width = "200px"/>
      &ensp; &ensp;
@@ -114,14 +121,14 @@ Insert gif or link to demo
 
 
 
-### Offer picking system
-#### pick offer based on cart price
+### Feature for picking an offer
+#### apply an offer based on the overall cart price.
 <span>
    <img src = "./readme/copied-offer-view.jpg" width = "200px"/>
      &ensp; &ensp;
  </span>
 
-#### pick offer based on selected  items available with this offer  
+#### Choose items from the selected offer.
 <span>
    <img src = "./readme/items-by-offer.jpg" width = "200px"/>
      &ensp; &ensp;
@@ -131,7 +138,7 @@ Insert gif or link to demo
 
 
 
-### View item by category page 
+### Page for viewing items by category
 <span>
    <img src = "./readme/items-by-category.jpg" width = "200px"/>
      &ensp; &ensp;
@@ -223,7 +230,7 @@ Insert gif or link to demo
 
 
 
-### payment and order page
+### Page for ordering and paying
 <span>
    <img src = "./readme/pick-payment-method.jpg" width = "200px"/>
      &ensp; &ensp;
@@ -234,13 +241,18 @@ Insert gif or link to demo
      &ensp; &ensp;
  </span>
 
-#### order confiormation notification
+#### order confirmation notification
 <span>
    <img src = "./readme/order-confiormation.jpg" width = "200px"/>
      &ensp; &ensp;
  </span>
 
-#### orderd items view page
+<span>
+   <img src = "./readme/confiormation-push-notification.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+
+#### page for viewing ordered items
  <span>
    <img src = "./readme/order-details-view.jpg" width = "200px"/>
      &ensp; &ensp;
@@ -254,7 +266,7 @@ Insert gif or link to demo
 
 
 
-### user account view page
+### Page for viewing a user's account
 <span>
    <img src = "./readme/view-user-account.jpg" width = "200px"/>
      &ensp; &ensp;
@@ -266,7 +278,7 @@ Insert gif or link to demo
  </span>
 
 
-#### adding new address page
+#### Add new address page
  <span>
    <img src = "./readme/add-map-screen.jpg" width = "200px"/>
      &ensp; &ensp;

@@ -154,6 +154,11 @@ Insert gif or link to demo
      &ensp; &ensp;
  </span>
 
+ <span>
+   <img src = ./readme/pizza-customization-picking-prompt.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+
 <span>
    <img src = "./readme/add-topping-view.jpg" width = "200px"/>
      &ensp; &ensp;
@@ -174,15 +179,84 @@ Insert gif or link to demo
      &ensp; &ensp;
  </span>
 
+
+
+
+
+### Cart page
 <span>
-   <img src = "./readme/pizza-size-customization.jpg" width = "200px"/>
+   <img src = "./readme/empty-cart.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+
+<span>
+   <img src = "./readme/cart-screen-withouth-offer.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+
+<span>
+   <img src = "./readme/cart-screen-item-details.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+
+<span>
+   <img src = "./readme/cart-screen-delete.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+
+<span>
+   <img src = "./readme/view-all-offers.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+
+<span>
+   <img src = "./readme/offer-added-confetti.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+
+<span>
+   <img src = "./readme/cart-screen-with-added-offer.jpg" width = "200px"/>
      &ensp; &ensp;
  </span>
 
 
 
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+
+### payment and order page
+
+<span>
+   <img src = "./readme/pick-payment-method.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+
+<span>
+   <img src = "./readme/payment-success.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+
+#### order confiormation notification
+<span>
+   <img src = "./readme/order-confiormation.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+
+#### orderd items view page
+ <span>
+   <img src = "./readme/order-details-view.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+
+<span>
+   <img src = "./readme/orderd-items-view.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+
+
+
+
+
+
 
 
 

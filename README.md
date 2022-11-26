@@ -43,29 +43,56 @@ viewing order history and some other features
 Insert gif or link to demo
 
 
+
 ## Screenshots
 
-### welcome screen
+### Welcome screen and authentication screen
+<span>
+  <img src = " ./readme/welcome-screen.jpg" width = "200px"/>  
+    &ensp; &ensp;
+</span>
 
-![App screenshot] (./readme/welcome-screen.jpg)
+<span>
+  <img src = " ./readme/signup-screen.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+  
 
-*Welcome screen*
+### user registartion screen
 
-### authentication screen
+<span>
+  <img src = "./readme/user-registartion-view.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+
+<span>
+  <img src = "./readme/location-fetching-prompt.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+
+<span>
+  <img src = "./readme/adding-maps.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+
+<span>
+  <img src = "./readme/user-registration.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
 
 
-### signup screen
+### user location picking prompt
 
-
-### user registration screen
-
-
-### user location picking screen
+<span>
+  <img src = "./readme/loaction-pick-prompt.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
 
 
 
 
 ![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+
 
 
 

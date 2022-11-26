@@ -155,7 +155,7 @@ Insert gif or link to demo
  </span>
 
  <span>
-   <img src = ./readme/pizza-customization-picking-prompt.jpg" width = "200px"/>
+   <img src = "./readme/pizza-customization-picking-prompt.jpg" width = "200px"/>
      &ensp; &ensp;
  </span>
 
@@ -224,7 +224,6 @@ Insert gif or link to demo
 
 
 ### payment and order page
-
 <span>
    <img src = "./readme/pick-payment-method.jpg" width = "200px"/>
      &ensp; &ensp;
@@ -255,9 +254,43 @@ Insert gif or link to demo
 
 
 
+### user account view page
+<span>
+   <img src = "./readme/view-user-account.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+
+ <span>
+   <img src = "./readme/viewing-past-orders.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
 
 
+#### adding new address page
+ <span>
+   <img src = "./readme/add-map-screen.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
 
+ <span>
+   <img src = "./readme/add-map-with-work-tag.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+
+ <span>
+   <img src = "./readme/add-map-with-other-tag.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+
+ <span>
+   <img src = "./readme/add-map-confiormation.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
+
+ <span>
+   <img src = "./readme/pick-from-multipple-address.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
 
 
 

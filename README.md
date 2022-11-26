@@ -81,9 +81,12 @@ Insert gif or link to demo
  </span>
 
 
-### App home page
+### user location picking prompt
 
-
+<span>
+  <img src = "./readme/loaction-pick-prompt.jpg" width = "200px"/>
+     &ensp; &ensp;
+ </span>
 
 
 

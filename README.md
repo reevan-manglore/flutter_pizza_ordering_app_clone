@@ -1,4 +1,3 @@
-
 # Pizza Delivery App Clone
 
 ## Clone built using flutter and firebase
